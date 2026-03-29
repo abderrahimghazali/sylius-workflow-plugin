@@ -106,10 +106,11 @@ final class DryRunWorkflowExecutor
                 continue;
             }
             $edgeHandle = $edge['sourceHandle'] ?? null;
-            if ($sourceHandle !== null && $edgeHandle === $sourceHandle) {
+
+            if ($sourceHandle === null && $edgeHandle === null) {
                 return $edge['target'] ?? null;
             }
-            if ($sourceHandle !== null && $edgeHandle === null) {
+            if ($sourceHandle !== null && $edgeHandle === $sourceHandle) {
                 return $edge['target'] ?? null;
             }
         }

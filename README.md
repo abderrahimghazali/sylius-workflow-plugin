@@ -28,17 +28,14 @@
 
 ## Screenshots
 
-### Canvas Editor
+### Canvas Editor — Visual Node-Based Workflow Builder
 ![Canvas Editor](docs/images/canvas-editor.png)
 
-### Template Browser
-![Template Browser](docs/images/template-browser.png)
+### Workflow List — Admin Grid
+![Workflow List](docs/images/workflow-list.png)
 
-### Run Log
-![Run Log](docs/images/run-log.png)
-
-### Analytics Dashboard
-![Analytics](docs/images/analytics.png)
+### Run Detail — Execution Timeline
+![Run Detail](docs/images/run-detail.png)
 
 ## Features
 

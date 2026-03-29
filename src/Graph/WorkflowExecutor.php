@@ -297,15 +297,14 @@ final class WorkflowExecutor
                 continue;
             }
             $edgeHandle = $edge['sourceHandle'] ?? null;
+
+            // Both null — legacy linear edge
             if ($sourceHandle === null && $edgeHandle === null) {
                 return $edge['target'] ?? null;
             }
-            // Match specific handle (exit-true / exit-false)
+
+            // Exact handle match
             if ($sourceHandle !== null && $edgeHandle === $sourceHandle) {
-                return $edge['target'] ?? null;
-            }
-            // Fallback: if no handle specified on edge, treat as default
-            if ($sourceHandle !== null && $edgeHandle === null) {
                 return $edge['target'] ?? null;
             }
         }
