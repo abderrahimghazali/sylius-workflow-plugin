@@ -393,7 +393,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         onNodeClick={onNodeClick}
                         onPaneClick={onPaneClick}
                         fitView
-                        fitViewOptions={{ padding: 0.3 }}
+                        fitViewOptions={{ padding: 0.5, maxZoom: 1 }}
                         defaultEdgeOptions={{
                             type: 'smoothstep',
                             style: { stroke: '#94A3B8', strokeWidth: 1.5 },
