@@ -10,15 +10,15 @@ use Abderrahim\SyliusWorkflowPlugin\Template\WorkflowTemplateInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-final class SyliusWorkflowExtension extends Extension
+final class SyliusWorkflowExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2) . '/config'));
         $loader->load('services.yaml');
-        $loader->load('config.yaml');
 
         $container->registerForAutoconfiguration(RuleInterface::class)
             ->addTag('sylius_workflow.rule');
@@ -28,5 +28,14 @@ final class SyliusWorkflowExtension extends Extension
 
         $container->registerForAutoconfiguration(WorkflowTemplateInterface::class)
             ->addTag('sylius_workflow.template');
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2) . '/config'));
+
+        $loader->load('resources/workflow_campaign.yaml');
+        $loader->load('resources/workflow_run.yaml');
+        $loader->load('grids/admin/workflow_campaign.yaml');
     }
 }
