@@ -2,3 +2,4 @@ node_modules/
 package-lock.json
 assets/node_modules/
 assets/package-lock.json
+.DS_Store
