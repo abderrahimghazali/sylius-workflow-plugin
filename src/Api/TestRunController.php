@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
+#[IsGranted('ROLE_ADMINISTRATION_ACCESS')]
 final class TestRunController
 {
     public function __construct(

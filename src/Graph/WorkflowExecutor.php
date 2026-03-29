@@ -234,11 +234,22 @@ final class WorkflowExecutor
             $resumeNodeId,
         ));
 
+        $campaignId = $campaign->getId();
+        $runId = $run->getId();
+        if ($campaignId === null || $runId === null) {
+            $run->addLogEntry($delayNode->getId(), 'failed', 'Cannot delay: campaign or run not yet persisted.');
+            return false;
+        }
+
+        $subject = $context->getSubject();
         $message = new DelayedWorkflowMessage(
-            campaignId: (int) $campaign->getId(),
-            runId: (int) $run->getId(),
+            campaignId: $campaignId,
+            runId: $runId,
             resumeFromNodeId: $resumeNodeId,
-            context: $context,
+            event: $context->getEvent(),
+            subjectType: $this->resolveSubjectType($subject),
+            subjectId: method_exists($subject, 'getId') ? (int) $subject->getId() : 0,
+            channel: $context->getChannel(),
         );
 
         $this->messageBus->dispatch(

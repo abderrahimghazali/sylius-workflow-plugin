@@ -38,7 +38,11 @@ final class DryRunWorkflowExecutor
 
         $adjacency = [];
         foreach ($edges as $edge) {
-            $adjacency[$edge['source']][] = $edge['target'];
+            $source = $edge['source'] ?? '';
+            $target = $edge['target'] ?? '';
+            if ($source !== '' && $target !== '') {
+                $adjacency[$source][] = $target;
+            }
         }
 
         $startNodeId = null;

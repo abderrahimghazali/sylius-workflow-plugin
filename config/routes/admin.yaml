@@ -19,36 +19,7 @@ workflow_admin_campaign_create:
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::create
 
-workflow_admin_campaign_edit:
-    path: /workflows/{id}
-    methods: [GET, POST]
-    defaults:
-        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::edit
-
-workflow_admin_campaign_delete:
-    path: /workflows/{id}/delete
-    methods: [POST, DELETE]
-    defaults:
-        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::delete
-
-sylius_workflow_admin_canvas:
-    path: /workflows/{id}/canvas
-    methods: [GET]
-    defaults:
-        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::editCanvas
-
-workflow_admin_run_index:
-    path: /workflows/{id}/runs
-    methods: [GET]
-    defaults:
-        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController::index
-
-workflow_admin_run_show:
-    path: /workflows/{campaignId}/runs/{runId}
-    methods: [GET]
-    defaults:
-        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController::show
-
+# Static paths BEFORE {id} to prevent shadowing
 workflow_admin_analytics:
     path: /workflows/analytics
     methods: [GET]
@@ -67,21 +38,68 @@ workflow_admin_template_install:
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\TemplateController::install
 
+# Dynamic {id} routes with \d+ constraint
+workflow_admin_campaign_edit:
+    path: /workflows/{id}
+    requirements:
+        id: \d+
+    methods: [GET, POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::edit
+
+workflow_admin_campaign_delete:
+    path: /workflows/{id}/delete
+    requirements:
+        id: \d+
+    methods: [POST, DELETE]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::delete
+
+sylius_workflow_admin_canvas:
+    path: /workflows/{id}/canvas
+    requirements:
+        id: \d+
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::editCanvas
+
+workflow_admin_run_index:
+    path: /workflows/{id}/runs
+    requirements:
+        id: \d+
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController::index
+
+workflow_admin_run_show:
+    path: /workflows/{campaignId}/runs/{runId}
+    requirements:
+        campaignId: \d+
+        runId: \d+
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController::show
+
 workflow_admin_campaign_toggle:
     path: /workflows/{id}/toggle
+    requirements:
+        id: \d+
     methods: [PATCH]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::toggleEnabled
 
 sylius_workflow_api_save_graph:
     path: /workflows/{id}/graph
+    requirements:
+        id: \d+
     methods: [POST]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Api\WorkflowGraphController
 
 sylius_workflow_api_test_run:
     path: /workflows/{id}/test-run
+    requirements:
+        id: \d+
     methods: [POST]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Api\TestRunController
-

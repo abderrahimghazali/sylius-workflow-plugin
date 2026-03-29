@@ -62,7 +62,7 @@ final class WorkflowRunController
         }
 
         $run = $this->entityManager->find(WorkflowRun::class, $runId);
-        if ($run === null || $run->getCampaign()->getId() !== $campaignId) {
+        if ($run === null || $run->getCampaign()->getId() !== $campaign->getId()) {
             throw new NotFoundHttpException('Run not found.');
         }
 

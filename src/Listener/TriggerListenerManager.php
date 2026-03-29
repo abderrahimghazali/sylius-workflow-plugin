@@ -90,14 +90,22 @@ final class TriggerListenerManager
                     continue;
                 }
 
-                // Create trigger log
+                // Create trigger log — catch duplicate key race condition
                 $triggerLog = new WorkflowTriggerLog();
                 $triggerLog->setCampaign($campaign);
                 $triggerLog->setEventName($triggerEvent->value);
                 $triggerLog->setSubjectId($subjectId);
                 $triggerLog->setDedupKey($dedupKey);
                 $this->entityManager->persist($triggerLog);
-                $this->entityManager->flush();
+
+                try {
+                    $this->entityManager->flush();
+                } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                    $this->logger->debug('Workflow trigger deduplicated (race condition caught).', [
+                        'campaign' => $campaign->getId(),
+                    ]);
+                    continue;
+                }
 
                 // Execute workflow
                 $context = new WorkflowContext(

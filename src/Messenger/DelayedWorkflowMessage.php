@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Messenger;
 
-use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowContext;
-
 final class DelayedWorkflowMessage
 {
     public function __construct(
         private readonly int $campaignId,
         private readonly int $runId,
         private readonly string $resumeFromNodeId,
-        private readonly WorkflowContext $context,
+        private readonly string $event,
+        private readonly string $subjectType,
+        private readonly int $subjectId,
+        private readonly string $channel,
     ) {
     }
 
@@ -31,8 +32,23 @@ final class DelayedWorkflowMessage
         return $this->resumeFromNodeId;
     }
 
-    public function getContext(): WorkflowContext
+    public function getEvent(): string
     {
-        return $this->context;
+        return $this->event;
+    }
+
+    public function getSubjectType(): string
+    {
+        return $this->subjectType;
+    }
+
+    public function getSubjectId(): int
+    {
+        return $this->subjectId;
+    }
+
+    public function getChannel(): string
+    {
+        return $this->channel;
     }
 }

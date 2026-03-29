@@ -1,0 +1,4 @@
+workflow:
+    flash:
+        updated: 'Workflow has been successfully updated.'
+        deleted: 'Workflow has been successfully deleted.'

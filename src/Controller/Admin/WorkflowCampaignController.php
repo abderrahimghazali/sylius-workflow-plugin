@@ -66,7 +66,7 @@ final class WorkflowCampaignController extends AbstractController
             $campaign->setUpdatedAt(new \DateTimeImmutable());
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Workflow updated successfully.');
+            $this->addFlash('success', 'workflow.flash.updated');
 
             return $this->redirectToRoute('workflow_admin_campaign_edit', ['id' => $campaign->getId()]);
         }
@@ -99,7 +99,7 @@ final class WorkflowCampaignController extends AbstractController
         $this->entityManager->remove($campaign);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Workflow deleted successfully.');
+        $this->addFlash('success', 'workflow.flash.deleted');
 
         return $this->redirectToRoute('workflow_admin_campaign_index');
     }
