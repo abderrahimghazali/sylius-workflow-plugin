@@ -1,9 +1,9 @@
-{% set status = data %}
+{% set status_value = data.value is defined ? data.value : data %}
 {% set colors = {
     'draft': 'secondary',
     'active': 'success',
     'paused': 'warning',
 } %}
-<span class="badge bg-{{ colors[status.value] ?? 'secondary' }}">
-    {{ ('workflow.ui.' ~ status.value)|trans }}
+<span class="badge bg-{{ colors[status_value] ?? 'secondary' }}">
+    {{ ('workflow.ui.' ~ status_value)|trans }}
 </span>

@@ -1,24 +1,2 @@
-<div class="form-check form-switch">
-    <input
-        class="form-check-input swp-toggle-enabled"
-        type="checkbox"
-        {{ resource.enabled ? 'checked' : '' }}
-        data-campaign-id="{{ resource.id }}"
-        data-url="/api/v2/admin/workflows/{{ resource.id }}/toggle"
-    >
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.swp-toggle-enabled').forEach(function (el) {
-        el.addEventListener('change', function () {
-            fetch(el.dataset.url, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-            }).catch(function () {
-                el.checked = !el.checked;
-            });
-        });
-    });
-});
-</script>
+{% import '@SyliusUi/macro/labels.html.twig' as label %}
+{{ label.status(data) }}
