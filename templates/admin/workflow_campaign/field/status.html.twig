@@ -4,6 +4,6 @@
     'active': 'success',
     'paused': 'warning',
 } %}
-<span class="badge bg-{{ colors[status_value] ?? 'secondary' }}">
+<span class="badge text-white bg-{{ colors[status_value] ?? 'secondary' }}">
     {{ ('workflow.ui.' ~ status_value)|trans }}
 </span>
