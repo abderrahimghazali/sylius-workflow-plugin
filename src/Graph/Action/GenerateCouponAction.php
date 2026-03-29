@@ -84,12 +84,12 @@ final class GenerateCouponAction implements ActionInterface
         // Add to all channels
         $channels = $this->channelRepository->findAll();
         foreach ($channels as $channel) {
+            /** @var \Sylius\Component\Channel\Model\ChannelInterface $channel */
             $promotion->addChannel($channel);
         }
 
         // Add percentage discount action
-        /** @var \Sylius\Component\Promotion\Model\PromotionActionInterface $action */
-        $action = new \Sylius\Component\Core\Model\PromotionAction();
+        $action = new \Sylius\Component\Promotion\Model\PromotionAction();
         $action->setType('order_percentage_discount');
         $action->setConfiguration(['percentage' => $discountPercent / 100]);
         $promotion->addAction($action);
