@@ -6,19 +6,10 @@ namespace Abderrahim\SyliusWorkflowPlugin\Repository;
 
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign;
 use Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 
-/**
- * @extends ServiceEntityRepository<WorkflowCampaign>
- */
-class WorkflowCampaignRepository extends ServiceEntityRepository
+class WorkflowCampaignRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, WorkflowCampaign::class);
-    }
-
     /**
      * @return WorkflowCampaign[]
      */
@@ -32,7 +23,6 @@ class WorkflowCampaignRepository extends ServiceEntityRepository
 
         $campaigns = $qb->getQuery()->getResult();
 
-        // Filter campaigns whose trigger node matches the event
         return array_filter($campaigns, function (WorkflowCampaign $campaign) use ($eventName): bool {
             foreach ($campaign->getNodes() as $node) {
                 if (($node['type'] ?? '') === 'trigger' && ($node['config']['event'] ?? '') === $eventName) {

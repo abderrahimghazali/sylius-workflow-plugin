@@ -5,18 +5,10 @@ declare(strict_types=1);
 namespace Abderrahim\SyliusWorkflowPlugin\Repository;
 
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowRun;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 
-/**
- * @extends ServiceEntityRepository<WorkflowRun>
- */
-class WorkflowRunRepository extends ServiceEntityRepository
+class WorkflowRunRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, WorkflowRun::class);
-    }
 
     public function countByCampaignAndSubject(int $campaignId, int $subjectId): int
     {
