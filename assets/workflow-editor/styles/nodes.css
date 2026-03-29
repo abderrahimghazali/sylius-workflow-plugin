@@ -545,58 +545,77 @@
 
 /* ── Edge Insert Button (Shopify Flow style) ─────────────── */
 
+.swp-edge-label {
+    position: absolute;
+    pointer-events: all;
+    z-index: 5;
+}
+
 .swp-edge-add-btn {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     border: 1.5px solid var(--swp-border);
     background: var(--swp-surface);
     color: var(--swp-text-tertiary);
-    font-size: 16px;
-    line-height: 1;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s ease;
+    padding: 0;
+    transition: all 0.2s ease;
     box-shadow: var(--swp-shadow);
     opacity: 0;
-    font-family: var(--swp-font);
 }
 
-.react-flow__edge:hover .swp-edge-add-btn,
-.swp-edge-add-btn:focus {
-    opacity: 1;
+.swp-edge-label:hover .swp-edge-add-btn,
+.swp-edge-add-btn--active {
+    opacity: 1 !important;
 }
 
-.swp-edge-add-btn:hover {
-    opacity: 1;
+.swp-edge-add-btn:hover,
+.swp-edge-add-btn--active {
+    width: 24px;
+    height: 24px;
     background: var(--swp-blue);
     border-color: var(--swp-blue);
     color: #fff;
-    transform: scale(1.15);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), var(--swp-shadow);
 }
 
 .swp-edge-insert-menu {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
     background: var(--swp-surface);
     border: 1px solid var(--swp-border);
-    border-radius: var(--swp-radius-sm);
-    box-shadow: var(--swp-shadow-lg);
-    padding: 4px;
-    min-width: 140px;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
+    padding: 6px;
+    min-width: 160px;
+    z-index: 1000;
     font-family: var(--swp-font);
+    animation: swp-menu-in 0.15s ease;
+}
+
+@keyframes swp-menu-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .swp-edge-insert-item {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
-    padding: 7px 12px;
+    padding: 8px 10px;
     border: none;
-    border-radius: 6px;
+    border-radius: 7px;
     background: none;
     text-align: left;
     font-size: 13px;
+    font-weight: 500;
     color: var(--swp-text);
     cursor: pointer;
     font-family: var(--swp-font);
@@ -605,6 +624,16 @@
 
 .swp-edge-insert-item:hover {
     background: var(--swp-border-light);
+}
+
+.swp-edge-insert-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 /* ── Test Run Highlights ─────────────────────────────────── */

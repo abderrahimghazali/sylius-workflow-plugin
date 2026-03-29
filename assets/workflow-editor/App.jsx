@@ -37,28 +37,38 @@ function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePositi
             <BaseEdge path={path} style={style} />
             <EdgeLabelRenderer>
                 <div
+                    className="swp-edge-label"
                     style={{
-                        position: 'absolute',
                         transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-                        pointerEvents: 'all',
                     }}
                 >
-                    {!showMenu ? (
-                        <button
-                            className="swp-edge-add-btn"
-                            onClick={(e) => { e.stopPropagation(); data?.onInsertClick(id); }}
-                        >
-                            +
-                        </button>
-                    ) : (
+                    <button
+                        className={`swp-edge-add-btn ${showMenu ? 'swp-edge-add-btn--active' : ''}`}
+                        onClick={(e) => { e.stopPropagation(); data?.onInsertClick(id); }}
+                    >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                    </button>
+                    {showMenu && (
                         <div className="swp-edge-insert-menu">
                             <button className="swp-edge-insert-item" onClick={() => data?.onInsert(id, 'condition')}>
+                                <span className="swp-edge-insert-icon" style={{ background: 'var(--swp-condition)' }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                                </span>
                                 Condition
                             </button>
                             <button className="swp-edge-insert-item" onClick={() => data?.onInsert(id, 'action')}>
+                                <span className="swp-edge-insert-icon" style={{ background: 'var(--swp-action)' }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                </span>
                                 Action
                             </button>
                             <button className="swp-edge-insert-item" onClick={() => data?.onInsert(id, 'delay')}>
+                                <span className="swp-edge-insert-icon" style={{ background: 'var(--swp-delay)' }}>
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </span>
                                 Delay
                             </button>
                         </div>
