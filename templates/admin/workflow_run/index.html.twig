@@ -8,22 +8,25 @@
     <div class="page-wrapper">
         {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
 
+        {% include '@SyliusAdmin/shared/crud/common/content/flashes.html.twig' %}
+
         {% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
         <div class="page-header" data-sticky-header>
             <div class="container-xl">
                 {{ breadcrumbs([
                     { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
                     { name: 'workflow.ui.automation_workflows', url: path('workflow_admin_campaign_index'), active: false },
-                    { name: campaign.name, url: path('sylius_workflow_admin_canvas', {id: campaign.id}), active: false },
+                    { name: campaign.name, url: path('workflow_admin_campaign_edit', {id: campaign.id}), active: false },
                     { name: 'workflow.ui.run_log', active: true },
                 ]) }}
                 <div class="row mt-3 row-gap-2">
                     <div class="col-12 col-md">
-                        <h1 class="page-title">{{ 'workflow.ui.run_log'|trans }} — {{ campaign.name }}</h1>
+                        <h1 class="page-title">{{ 'workflow.ui.run_log'|trans }}</h1>
+                        <p class="text-secondary mb-0">{{ campaign.name }} — {{ total }} {{ 'workflow.ui.total_runs'|trans|lower }}</p>
                     </div>
                     <div class="col-auto">
                         <a href="{{ path('sylius_workflow_admin_canvas', {id: campaign.id}) }}" class="btn btn-outline-primary">
-                            {{ 'workflow.ui.back_to_canvas'|trans }}
+                            {{ 'workflow.ui.edit_canvas'|trans }}
                         </a>
                     </div>
                 </div>
@@ -55,11 +58,9 @@
                                     } %}
                                     <tr>
                                         <td>#{{ run.id }}</td>
+                                        <td>{{ run.subjectType|capitalize }} #{{ run.subjectId }}</td>
                                         <td>
-                                            {{ run.subjectType|capitalize }} #{{ run.subjectId }}
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-{{ status_colors[run.status] ?? 'secondary' }}">
+                                            <span class="badge text-white bg-{{ status_colors[run.status] ?? 'secondary' }}">
                                                 {{ run.status }}
                                             </span>
                                         </td>
@@ -88,6 +89,35 @@
                             </tbody>
                         </table>
                     </div>
+
+                    {% if totalPages > 1 %}
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <p class="m-0 text-secondary">
+                                {{ 'workflow.ui.page'|trans }} {{ page }} / {{ totalPages }}
+                            </p>
+                            <nav>
+                                <ul class="pagination m-0">
+                                    <li class="page-item {{ page <= 1 ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ path('workflow_admin_run_index', {id: campaign.id, page: page - 1}) }}">
+                                            &laquo;
+                                        </a>
+                                    </li>
+                                    {% for p in range(1, totalPages) %}
+                                        <li class="page-item {{ p == page ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ path('workflow_admin_run_index', {id: campaign.id, page: p}) }}">
+                                                {{ p }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                    <li class="page-item {{ page >= totalPages ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ path('workflow_admin_run_index', {id: campaign.id, page: page + 1}) }}">
+                                            &raquo;
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

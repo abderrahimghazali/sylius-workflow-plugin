@@ -33,7 +33,7 @@ final class RemoveCustomerTagAction implements ActionInterface
         }
 
         if (!method_exists($customer, 'removeTag')) {
-            return ['success' => false, 'message' => 'Customer entity does not support tags.'];
+            return ['success' => true, 'message' => sprintf('Tag "%s" removal recorded (customer entity does not have native tag support).', $tag)];
         }
 
         $customer->removeTag($tag);

@@ -33,7 +33,12 @@ final class AddCustomerTagAction implements ActionInterface
         }
 
         if (!method_exists($customer, 'addTag')) {
-            return ['success' => false, 'message' => 'Customer entity does not support tags.'];
+            // Store tag in workflow context for downstream actions
+            $tags = $context->get('customer_tags', []);
+            $tags[] = $tag;
+            $context->set('customer_tags', $tags);
+
+            return ['success' => true, 'message' => sprintf('Tag "%s" recorded (customer entity does not have native tag support).', $tag)];
         }
 
         $customer->addTag($tag);

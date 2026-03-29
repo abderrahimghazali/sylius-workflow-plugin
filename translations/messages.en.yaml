@@ -56,3 +56,4 @@ workflow:
         edit_workflow: 'Edit Workflow'
         details: 'Details'
         created_at: 'Created'
+        page: 'Page'

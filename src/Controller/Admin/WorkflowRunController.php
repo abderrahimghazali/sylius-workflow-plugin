@@ -8,6 +8,7 @@ use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign;
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowRun;
 use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,22 +24,31 @@ final class WorkflowRunController
     ) {
     }
 
-    public function index(int $id): Response
+    public function index(int $id, Request $request): Response
     {
         $campaign = $this->entityManager->find(WorkflowCampaign::class, $id);
         if ($campaign === null) {
             throw new NotFoundHttpException('Campaign not found.');
         }
 
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+
+        $total = $this->runRepository->count(['campaign' => $campaign]);
         $runs = $this->runRepository->findBy(
             ['campaign' => $campaign],
             ['startedAt' => 'DESC'],
-            100,
+            $limit,
+            $offset,
         );
 
         $content = $this->twig->render('@SyliusWorkflowPlugin/admin/workflow_run/index.html.twig', [
             'campaign' => $campaign,
             'runs' => $runs,
+            'page' => $page,
+            'totalPages' => (int) ceil($total / $limit),
+            'total' => $total,
         ]);
 
         return new Response($content);
