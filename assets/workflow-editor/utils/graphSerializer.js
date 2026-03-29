@@ -21,9 +21,9 @@ export function deserializeGraph(graph) {
         id: edge.id || `edge-${edge.source}-${edge.target}`,
         source: edge.source,
         target: edge.target,
-        type: 'smoothstep',
+        type: 'insertButton',
         animated: false,
-        style: { stroke: '#378ADD', strokeWidth: 1.5, opacity: 0.7 },
+        style: { stroke: '#94A3B8', strokeWidth: 1.5 },
     }));
 
     return { nodes, edges };

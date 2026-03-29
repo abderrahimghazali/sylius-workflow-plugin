@@ -6,6 +6,9 @@ import {
     useNodesState,
     useEdgesState,
     addEdge,
+    BaseEdge,
+    EdgeLabelRenderer,
+    getSmoothStepPath,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -24,6 +27,49 @@ const nodeTypes = {
     actionNode: ActionNode,
     delayNode: DelayNode,
 };
+
+function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, data }) {
+    const [path, labelX, labelY] = getSmoothStepPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
+    const showMenu = data?.insertEdgeId === id;
+
+    return (
+        <>
+            <BaseEdge path={path} style={style} />
+            <EdgeLabelRenderer>
+                <div
+                    style={{
+                        position: 'absolute',
+                        transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                        pointerEvents: 'all',
+                    }}
+                >
+                    {!showMenu ? (
+                        <button
+                            className="swp-edge-add-btn"
+                            onClick={(e) => { e.stopPropagation(); data?.onInsertClick(id); }}
+                        >
+                            +
+                        </button>
+                    ) : (
+                        <div className="swp-edge-insert-menu">
+                            <button className="swp-edge-insert-item" onClick={() => data?.onInsert(id, 'condition')}>
+                                Condition
+                            </button>
+                            <button className="swp-edge-insert-item" onClick={() => data?.onInsert(id, 'action')}>
+                                Action
+                            </button>
+                            <button className="swp-edge-insert-item" onClick={() => data?.onInsert(id, 'delay')}>
+                                Delay
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </EdgeLabelRenderer>
+        </>
+    );
+}
+
+const edgeTypes = { insertButton: InsertButtonEdge };
 
 const NODE_TYPE_TO_COMPONENT = {
     trigger: 'triggerNode',
@@ -48,8 +94,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
     const [testResults, setTestResults] = useState(null);
     const [toast, setToast] = useState(null);
     const [addMenuOpen, setAddMenuOpen] = useState(false);
-    const [insertEdge, setInsertEdge] = useState(null); // edge to insert into
-    const [insertMenuPos, setInsertMenuPos] = useState(null);
+    const [insertEdgeId, setInsertEdgeId] = useState(null);
     const [saving, setSaving] = useState(false);
     const toastTimer = useRef(null);
 
@@ -65,7 +110,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
             const edge = {
                 ...params,
                 id: generateEdgeId(params.source, params.target),
-                type: 'smoothstep',
+                type: 'insertButton',
                 animated: false,
                 style: { stroke: '#94A3B8', strokeWidth: 1.5 },
             };
@@ -82,69 +127,44 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
 
     const onPaneClick = useCallback(() => {
         setSelectedNodeId(null);
-        setInsertEdge(null);
-        setInsertMenuPos(null);
+        setInsertEdgeId(null);
     }, []);
 
-    // ── Insert node on edge click ───────────────────────────
-
-    const onEdgeClick = useCallback((_event, edge) => {
-        _event.stopPropagation();
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        const targetNode = nodes.find((n) => n.id === edge.target);
-        if (!sourceNode || !targetNode) return;
-
-        const midX = (sourceNode.position.x + targetNode.position.x) / 2;
-        const midY = (sourceNode.position.y + targetNode.position.y) / 2;
-
-        setInsertEdge({ edge, midX, midY });
-        setInsertMenuPos({ x: _event.clientX, y: _event.clientY });
-    }, [nodes]);
+    // ── Insert node on edge ─────────────────────────────────
 
     const insertNodeOnEdge = useCallback(
-        (nodeType) => {
-            if (!insertEdge) return;
-            const { edge, midX, midY } = insertEdge;
-            const id = generateNodeId();
+        (edgeId, nodeType) => {
+            const edge = edges.find((e) => e.id === edgeId);
+            if (!edge) return;
 
-            const newNode = {
+            const sourceNode = nodes.find((n) => n.id === edge.source);
+            const targetNode = nodes.find((n) => n.id === edge.target);
+            if (!sourceNode || !targetNode) return;
+
+            const id = generateNodeId();
+            const midX = (sourceNode.position.x + targetNode.position.x) / 2;
+            const midY = (sourceNode.position.y + targetNode.position.y) / 2;
+
+            setNodes((nds) => [...nds, {
                 id,
                 type: NODE_TYPE_TO_COMPONENT[nodeType],
                 position: { x: midX, y: midY },
                 data: { nodeType, config: {}, label: '' },
-            };
+            }]);
 
-            setNodes((nds) => [...nds, newNode]);
-
-            // Remove old edge, add two new edges
             setEdges((eds) => {
-                const filtered = eds.filter((e) => e.id !== edge.id);
+                const filtered = eds.filter((e) => e.id !== edgeId);
                 return [
                     ...filtered,
-                    {
-                        id: generateEdgeId(edge.source, id),
-                        source: edge.source,
-                        target: id,
-                        type: 'smoothstep',
-                        animated: false,
-                        style: { stroke: '#94A3B8', strokeWidth: 1.5 },
-                    },
-                    {
-                        id: generateEdgeId(id, edge.target),
-                        source: id,
-                        target: edge.target,
-                        type: 'smoothstep',
-                        animated: false,
-                        style: { stroke: '#94A3B8', strokeWidth: 1.5 },
-                    },
+                    { id: generateEdgeId(edge.source, id), source: edge.source, target: id, type: 'insertButton', animated: false, style: { stroke: '#94A3B8', strokeWidth: 1.5 } },
+                    { id: generateEdgeId(id, edge.target), source: id, target: edge.target, type: 'insertButton', animated: false, style: { stroke: '#94A3B8', strokeWidth: 1.5 } },
                 ];
             });
 
             setSelectedNodeId(id);
-            setInsertEdge(null);
-            setInsertMenuPos(null);
+            setInsertEdgeId(null);
         },
-        [insertEdge, setNodes, setEdges]
+        [edges, nodes, setNodes, setEdges]
     );
 
     // ── Delete node (keyboard) ──────────────────────────────
@@ -355,6 +375,21 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
         }
     }, [testSubjectType, testSubjectId, apiUrl, setNodes, setEdges, showToast]);
 
+    // ── Enrich edges with insert callbacks ──────────────────
+
+    const edgesWithData = useMemo(() =>
+        edges.map((e) => ({
+            ...e,
+            data: {
+                ...e.data,
+                insertEdgeId: insertEdgeId,
+                onInsertClick: (edgeId) => setInsertEdgeId((prev) => prev === edgeId ? null : edgeId),
+                onInsert: insertNodeOnEdge,
+            },
+        })),
+        [edges, insertEdgeId, insertNodeOnEdge]
+    );
+
     return (
         <div className="swp-editor" onKeyDown={onKeyDown} tabIndex={0}>
             {/* ── Toolbar ──────────────────────────────────── */}
@@ -444,14 +479,14 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 <div className="swp-editor__canvas">
                     <ReactFlow
                         nodes={nodes}
-                        edges={edges}
+                        edges={edgesWithData}
                         nodeTypes={nodeTypes}
+                        edgeTypes={edgeTypes}
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
                         onNodeClick={onNodeClick}
                         onPaneClick={onPaneClick}
-                        onEdgeClick={onEdgeClick}
                         fitView
                         fitViewOptions={{ padding: 0.5, maxZoom: 1 }}
                         defaultEdgeOptions={{
@@ -478,38 +513,6 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                     />
                 )}
             </div>
-
-            {/* ── Insert Node on Edge Menu ──────────────────── */}
-            {insertMenuPos && (
-                <div style={{
-                    position: 'fixed', inset: 0, zIndex: 998,
-                }} onClick={() => { setInsertEdge(null); setInsertMenuPos(null); }}>
-                    <div style={{
-                        position: 'absolute',
-                        left: insertMenuPos.x,
-                        top: insertMenuPos.y,
-                        background: '#fff',
-                        border: '1px solid #E5E7EB',
-                        borderRadius: '8px',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-                        padding: '4px',
-                        minWidth: '160px',
-                    }} onClick={(e) => e.stopPropagation()}>
-                        <div style={{ padding: '6px 10px', fontSize: '10px', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            Insert node
-                        </div>
-                        <button className="swp-dropdown__item" onClick={() => insertNodeOnEdge('condition')}>
-                            🔀 Condition
-                        </button>
-                        <button className="swp-dropdown__item" onClick={() => insertNodeOnEdge('action')}>
-                            ▶ Action
-                        </button>
-                        <button className="swp-dropdown__item" onClick={() => insertNodeOnEdge('delay')}>
-                            ⏳ Delay
-                        </button>
-                    </div>
-                </div>
-            )}
 
             {/* ── Test Run Modal ────────────────────────────── */}
             {testRunModal && (

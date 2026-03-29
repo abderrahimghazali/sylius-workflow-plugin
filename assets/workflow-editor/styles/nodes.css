@@ -543,6 +543,70 @@
     border-bottom: 1px solid var(--swp-border-light);
 }
 
+/* ── Edge Insert Button (Shopify Flow style) ─────────────── */
+
+.swp-edge-add-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--swp-border);
+    background: var(--swp-surface);
+    color: var(--swp-text-tertiary);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    box-shadow: var(--swp-shadow);
+    opacity: 0;
+    font-family: var(--swp-font);
+}
+
+.react-flow__edge:hover .swp-edge-add-btn,
+.swp-edge-add-btn:focus {
+    opacity: 1;
+}
+
+.swp-edge-add-btn:hover {
+    opacity: 1;
+    background: var(--swp-blue);
+    border-color: var(--swp-blue);
+    color: #fff;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.swp-edge-insert-menu {
+    background: var(--swp-surface);
+    border: 1px solid var(--swp-border);
+    border-radius: var(--swp-radius-sm);
+    box-shadow: var(--swp-shadow-lg);
+    padding: 4px;
+    min-width: 140px;
+    font-family: var(--swp-font);
+}
+
+.swp-edge-insert-item {
+    display: block;
+    width: 100%;
+    padding: 7px 12px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    text-align: left;
+    font-size: 13px;
+    color: var(--swp-text);
+    cursor: pointer;
+    font-family: var(--swp-font);
+    transition: background 0.1s ease;
+}
+
+.swp-edge-insert-item:hover {
+    background: var(--swp-border-light);
+}
+
 /* ── Test Run Highlights ─────────────────────────────────── */
 
 .swp-test-passed .swp-node {
