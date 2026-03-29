@@ -31,11 +31,20 @@ const nodeTypes = {
 function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, data }) {
     const [path, labelX, labelY] = getSmoothStepPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
     const showMenu = data?.insertEdgeId === id;
+    const isHovered = data?.hoveredEdgeId === id;
 
     return (
         <>
-            {/* Invisible wider hit area for hover */}
-            <path d={path} fill="none" stroke="transparent" strokeWidth={40} className="swp-edge-hit-area" />
+            {/* Invisible wider hit area for hover detection */}
+            <path
+                d={path}
+                fill="none"
+                stroke="transparent"
+                strokeWidth={40}
+                onMouseEnter={() => data?.onEdgeHover(id)}
+                onMouseLeave={() => data?.onEdgeHover(null)}
+                style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
+            />
             <BaseEdge path={path} style={style} />
             <EdgeLabelRenderer>
                 <div
@@ -45,8 +54,10 @@ function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePositi
                     }}
                 >
                     <button
-                        className={`swp-edge-add-btn ${showMenu ? 'swp-edge-add-btn--active' : ''}`}
+                        className={`swp-edge-add-btn ${isHovered || showMenu ? 'swp-edge-add-btn--visible' : ''} ${showMenu ? 'swp-edge-add-btn--active' : ''}`}
                         onClick={(e) => { e.stopPropagation(); data?.onInsertClick(id); }}
+                        onMouseEnter={() => data?.onEdgeHover(id)}
+                        onMouseLeave={() => { if (!showMenu) data?.onEdgeHover(null); }}
                     >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                             <line x1="12" y1="5" x2="12" y2="19" />
@@ -107,6 +118,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
     const [toast, setToast] = useState(null);
     const [addMenuOpen, setAddMenuOpen] = useState(false);
     const [insertEdgeId, setInsertEdgeId] = useState(null);
+    const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
     const [saving, setSaving] = useState(false);
     const toastTimer = useRef(null);
 
@@ -420,12 +432,14 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
             ...e,
             data: {
                 ...e.data,
-                insertEdgeId: insertEdgeId,
+                insertEdgeId,
+                hoveredEdgeId,
                 onInsertClick: (edgeId) => setInsertEdgeId((prev) => prev === edgeId ? null : edgeId),
                 onInsert: insertNodeOnEdge,
+                onEdgeHover: setHoveredEdgeId,
             },
         })),
-        [edges, insertEdgeId, insertNodeOnEdge]
+        [edges, insertEdgeId, hoveredEdgeId, insertNodeOnEdge]
     );
 
     return (

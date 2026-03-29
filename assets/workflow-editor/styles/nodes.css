@@ -568,14 +568,9 @@
     opacity: 0;
 }
 
-.swp-edge-hit-area {
-    pointer-events: stroke;
-    cursor: pointer;
-}
-
-.react-flow__edge:hover .swp-edge-add-btn,
-.swp-edge-label:hover .swp-edge-add-btn,
-.swp-edge-add-btn--active {
+.swp-edge-add-btn--visible,
+.swp-edge-add-btn--active,
+.swp-edge-label:hover .swp-edge-add-btn {
     opacity: 1 !important;
 }
 
