@@ -42,6 +42,13 @@ sylius_grid:
                     type: boolean
                     label: sylius.ui.enabled
             actions:
+                main:
+                    create:
+                        type: create
+                        label: workflow.ui.new_workflow
+                        options:
+                            link:
+                                route: workflow_admin_campaign_create
                 item:
                     edit_canvas:
                         type: show
