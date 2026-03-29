@@ -36,7 +36,6 @@ final class AddCustomerTagAction implements ActionInterface
             return ['success' => false, 'message' => 'Customer entity does not support tags.'];
         }
 
-        /** @phpstan-ignore-next-line */
         $customer->addTag($tag);
         $this->entityManager->flush();
 

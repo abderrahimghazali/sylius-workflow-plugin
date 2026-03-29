@@ -33,7 +33,6 @@ final class AddOrderNoteAction implements ActionInterface
         }
 
         if (method_exists($subject, 'setNotes')) {
-            /** @phpstan-ignore-next-line */
             $subject->setNotes(
                 ($subject->getNotes() ?? '') . "\n[Workflow] " . $note
             );

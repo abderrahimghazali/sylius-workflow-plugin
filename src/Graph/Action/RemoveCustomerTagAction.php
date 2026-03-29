@@ -36,7 +36,6 @@ final class RemoveCustomerTagAction implements ActionInterface
             return ['success' => false, 'message' => 'Customer entity does not support tags.'];
         }
 
-        /** @phpstan-ignore-next-line */
         $customer->removeTag($tag);
         $this->entityManager->flush();
 

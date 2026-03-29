@@ -223,8 +223,8 @@ final class WorkflowExecutor
         ));
 
         $message = new DelayedWorkflowMessage(
-            campaignId: $campaign->getId(),
-            runId: $run->getId(),
+            campaignId: (int) $campaign->getId(),
+            runId: (int) $run->getId(),
             resumeFromNodeId: $resumeNodeId,
             context: $context,
         );
