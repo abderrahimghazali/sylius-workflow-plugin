@@ -52,6 +52,7 @@ final class GenerateCouponAction implements ActionInterface
 
             /** @var PromotionCouponInterface $coupon */
             $coupon = $this->couponFactory->createForPromotion($promotion);
+            $coupon->setCode($promotionCode . '-' . strtoupper(bin2hex(random_bytes(4))));
             $coupon->setUsageLimit($usageLimit);
             $coupon->setExpiresAt(new \DateTime(sprintf('+%d days', $expiresInDays)));
 
