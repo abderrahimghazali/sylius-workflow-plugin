@@ -9,7 +9,7 @@ sylius_grid:
                         method: createQueryBuilder
                         arguments: ['c']
             sorting:
-                createdAt: desc
+                name: asc
             fields:
                 name:
                     type: string
@@ -20,21 +20,10 @@ sylius_grid:
                     label: workflow.ui.status
                     options:
                         template: '@SyliusWorkflowPlugin/admin/workflow_campaign/field/status.html.twig'
-                triggerEvent:
-                    type: twig
-                    label: workflow.ui.trigger_event
-                    options:
-                        template: '@SyliusWorkflowPlugin/admin/workflow_campaign/field/trigger_event.html.twig'
                 runCount:
                     type: string
                     label: workflow.ui.run_count
                     sortable: ~
-                lastRunAt:
-                    type: datetime
-                    label: workflow.ui.last_run_at
-                    sortable: ~
-                    options:
-                        format: 'Y-m-d H:i'
                 enabled:
                     type: twig
                     label: sylius.ui.enabled
