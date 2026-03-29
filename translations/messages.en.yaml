@@ -53,3 +53,6 @@ workflow:
         templates: 'Templates'
         templates_description: 'Pre-built workflows you can install and customize.'
         install_template: 'Install Template'
+        edit_workflow: 'Edit Workflow'
+        details: 'Details'
+        created_at: 'Created'

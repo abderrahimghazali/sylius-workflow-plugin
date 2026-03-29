@@ -1,0 +1,101 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'workflow.ui.edit_workflow'|trans }}: {{ campaign.name }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
+
+    <div class="page-wrapper">
+        {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+        {% include '@SyliusAdmin/shared/crud/common/content/flashes.html.twig' %}
+
+        {% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+        <div class="page-header" data-sticky-header>
+            <div class="container-xl">
+                {{ breadcrumbs([
+                    { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+                    { name: 'workflow.ui.automation_workflows', url: path('workflow_admin_campaign_index'), active: false },
+                    { name: campaign.name, active: true },
+                ]) }}
+                <div class="row mt-3 row-gap-2">
+                    <div class="col-12 col-md">
+                        <h1 class="page-title">{{ campaign.name }}</h1>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ path('sylius_workflow_admin_canvas', {id: campaign.id}) }}" class="btn btn-primary">
+                            {{ 'workflow.ui.edit_canvas'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div class="container-xl">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                {% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+                                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                                    {{ form_widget(form) }}
+                                    <div class="d-flex gap-2 mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            {{ 'sylius.ui.save'|trans }}
+                                        </button>
+                                        <a href="{{ path('workflow_admin_campaign_index') }}" class="btn btn-outline-secondary">
+                                            {{ 'sylius.ui.cancel'|trans }}
+                                        </a>
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h3 class="card-title">{{ 'workflow.ui.details'|trans }}</h3>
+                                <table class="table table-sm mb-0">
+                                    <tr>
+                                        <td class="text-secondary">{{ 'workflow.ui.status'|trans }}</td>
+                                        <td>
+                                            {% set status_colors = {
+                                                'draft': 'secondary',
+                                                'active': 'success',
+                                                'paused': 'warning',
+                                            } %}
+                                            <span class="badge text-white bg-{{ status_colors[campaign.status.value] ?? 'secondary' }}">
+                                                {{ ('workflow.ui.' ~ campaign.status.value)|trans }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary">{{ 'workflow.ui.run_count'|trans }}</td>
+                                        <td>{{ campaign.runCount }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-secondary">{{ 'workflow.ui.created_at'|trans }}</td>
+                                        <td>{{ campaign.createdAt|date('Y-m-d H:i') }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body d-grid gap-2">
+                                <a href="{{ path('sylius_workflow_admin_canvas', {id: campaign.id}) }}" class="btn btn-outline-primary">
+                                    {{ 'workflow.ui.edit_canvas'|trans }}
+                                </a>
+                                <a href="{{ path('workflow_admin_run_index', {id: campaign.id}) }}" class="btn btn-outline-secondary">
+                                    {{ 'workflow.ui.view_runs'|trans }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include '@SyliusAdmin/shared/crud/common/content/footer.html.twig' %}
+    </div>
+{% endblock %}

@@ -19,6 +19,12 @@ workflow_admin_campaign_create:
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::create
 
+workflow_admin_campaign_edit:
+    path: /workflows/{id}
+    methods: [GET, POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::edit
+
 workflow_admin_campaign_delete:
     path: /workflows/{id}/delete
     methods: [POST, DELETE]
@@ -26,7 +32,7 @@ workflow_admin_campaign_delete:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::delete
 
 sylius_workflow_admin_canvas:
-    path: /workflows/{id}/edit
+    path: /workflows/{id}/canvas
     methods: [GET]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::editCanvas

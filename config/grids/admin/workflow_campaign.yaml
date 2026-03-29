@@ -50,12 +50,11 @@ sylius_grid:
                             link:
                                 route: workflow_admin_campaign_create
                 item:
-                    edit_canvas:
+                    edit:
                         type: update
-                        label: workflow.ui.edit_canvas
                         options:
                             link:
-                                route: sylius_workflow_admin_canvas
+                                route: workflow_admin_campaign_edit
                                 parameters:
                                     id: resource.id
                     view_runs:

@@ -290,24 +290,12 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
         }
     }, [testSubjectType, testSubjectId, apiUrl, setNodes, setEdges, showToast]);
 
-    // ── Status badge class ──────────────────────────────────
-
-    const badgeClass = `swp-toolbar__badge ${
-        status === 'active' ? 'swp-toolbar__badge--active' :
-        status === 'paused' ? 'swp-toolbar__badge--paused' : ''
-    }`;
-
     return (
         <div className="swp-editor" onKeyDown={onKeyDown} tabIndex={0}>
             {/* ── Toolbar ──────────────────────────────────── */}
             <div className="swp-toolbar">
                 <div className="swp-toolbar__left">
-                    <input
-                        className="swp-toolbar__name-input"
-                        value={workflowName}
-                        onChange={(e) => setWorkflowName(e.target.value)}
-                    />
-                    <span className={badgeClass}>{status}</span>
+                    <span className="swp-toolbar__title">{workflowName}</span>
                 </div>
 
                 <div className="swp-toolbar__right">

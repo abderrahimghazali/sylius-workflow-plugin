@@ -52,6 +52,31 @@ final class WorkflowCampaignController extends AbstractController
         ]);
     }
 
+    public function edit(int $id, Request $request): Response
+    {
+        $campaign = $this->entityManager->find(WorkflowCampaign::class, $id);
+        if ($campaign === null) {
+            throw new NotFoundHttpException('Campaign not found.');
+        }
+
+        $form = $this->createForm(WorkflowCampaignType::class, $campaign);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $campaign->setUpdatedAt(new \DateTimeImmutable());
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Workflow updated successfully.');
+
+            return $this->redirectToRoute('workflow_admin_campaign_edit', ['id' => $campaign->getId()]);
+        }
+
+        return $this->render('@SyliusWorkflowPlugin/admin/workflow_campaign/edit.html.twig', [
+            'campaign' => $campaign,
+            'form' => $form->createView(),
+        ]);
+    }
+
     public function editCanvas(int $id): Response
     {
         $campaign = $this->entityManager->find(WorkflowCampaign::class, $id);

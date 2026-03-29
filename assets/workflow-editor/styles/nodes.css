@@ -217,48 +217,11 @@
     gap: 6px;
 }
 
-.swp-toolbar__name-input {
+.swp-toolbar__title {
     font-size: 15px;
     font-weight: 600;
-    border: 1px solid transparent;
-    border-radius: var(--swp-radius-sm);
-    padding: 6px 10px;
-    background: transparent;
     color: var(--swp-text);
-    min-width: 220px;
-    transition: all 0.15s ease;
     font-family: var(--swp-font);
-}
-
-.swp-toolbar__name-input:hover {
-    background: var(--swp-border-light);
-}
-
-.swp-toolbar__name-input:focus {
-    border-color: var(--swp-blue);
-    background: var(--swp-surface);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.swp-toolbar__badge {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: var(--swp-border-light);
-    color: var(--swp-text-secondary);
-}
-
-.swp-toolbar__badge--active {
-    background: #DCFCE7;
-    color: #166534;
-}
-
-.swp-toolbar__badge--paused {
-    background: #FEF3C7;
-    color: #92400E;
 }
 
 /* ── Buttons ─────────────────────────────────────────────── */
