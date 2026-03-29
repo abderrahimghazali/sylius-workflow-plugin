@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
-use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Sylius\Resource\Model\ResourceInterface;
 
-#[ORM\Entity(repositoryClass: WorkflowRunRepository::class)]
-#[ORM\Table(name: 'abderrahim_workflow_run')]
 class WorkflowRun implements ResourceInterface
 {
     public const STATUS_RUNNING = 'running';
@@ -17,37 +13,24 @@ class WorkflowRun implements ResourceInterface
     public const STATUS_FAILED = 'failed';
     public const STATUS_SKIPPED = 'skipped';
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: WorkflowCampaign::class, inversedBy: 'runs')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private WorkflowCampaign $campaign;
 
-    #[ORM\Column(length: 50)]
-    private string $subjectType;
+    private string $subjectType = '';
 
-    #[ORM\Column]
-    private int $subjectId;
+    private int $subjectId = 0;
 
-    #[ORM\Column(length: 20)]
     private string $status = self::STATUS_RUNNING;
 
-    #[ORM\Column(length: 255)]
     private string $currentNodeId = '';
 
-    #[ORM\Column(type: 'json')]
     private array $executionLog = [];
 
-    #[ORM\Column]
     private \DateTimeImmutable $startedAt;
 
-    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $completedAt = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $errorMessage = null;
 
     public function __construct()

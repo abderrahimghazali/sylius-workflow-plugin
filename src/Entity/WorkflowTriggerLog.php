@@ -4,33 +4,19 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-#[ORM\Entity]
-#[ORM\Table(name: 'abderrahim_workflow_trigger_log')]
-#[ORM\UniqueConstraint(name: 'uniq_dedup_key', columns: ['dedup_key'])]
 class WorkflowTriggerLog
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: WorkflowCampaign::class, inversedBy: 'triggerLogs')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private WorkflowCampaign $campaign;
 
-    #[ORM\Column(length: 255)]
-    private string $eventName;
+    private string $eventName = '';
 
-    #[ORM\Column]
-    private int $subjectId;
+    private int $subjectId = 0;
 
-    #[ORM\Column]
     private \DateTimeImmutable $triggeredAt;
 
-    #[ORM\Column(length: 255, unique: true)]
-    private string $dedupKey;
+    private string $dedupKey = '';
 
     public function __construct()
     {

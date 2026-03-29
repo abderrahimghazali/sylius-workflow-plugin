@@ -5,54 +5,36 @@ declare(strict_types=1);
 namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
 use Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus;
-use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowCampaignRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Sylius\Resource\Model\ResourceInterface;
 
-#[ORM\Entity(repositoryClass: WorkflowCampaignRepository::class)]
-#[ORM\Table(name: 'abderrahim_workflow_campaign')]
 class WorkflowCampaign implements ResourceInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private string $name;
+    private string $name = '';
 
-    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column]
     private bool $enabled = false;
 
-    #[ORM\Column(length: 20, enumType: WorkflowStatus::class)]
     private WorkflowStatus $status = WorkflowStatus::Draft;
 
-    #[ORM\Column(type: 'json')]
     private array $graph = ['nodes' => [], 'edges' => []];
 
-    #[ORM\Column]
     private int $runCount = 0;
 
-    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastRunAt = null;
 
-    #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
     private \DateTimeImmutable $updatedAt;
 
     /** @var Collection<int, WorkflowRun> */
-    #[ORM\OneToMany(targetEntity: WorkflowRun::class, mappedBy: 'campaign', cascade: ['persist', 'remove'])]
     private Collection $runs;
 
     /** @var Collection<int, WorkflowTriggerLog> */
-    #[ORM\OneToMany(targetEntity: WorkflowTriggerLog::class, mappedBy: 'campaign', cascade: ['persist', 'remove'])]
     private Collection $triggerLogs;
 
     public function __construct()

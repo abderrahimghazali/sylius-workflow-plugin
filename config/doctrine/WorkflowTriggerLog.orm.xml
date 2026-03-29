@@ -19,9 +19,5 @@
         <field name="subjectId" type="integer" column="subject_id"/>
         <field name="triggeredAt" type="datetime_immutable" column="triggered_at"/>
         <field name="dedupKey" type="string" length="255" column="dedup_key" unique="true"/>
-
-        <unique-constraints>
-            <unique-constraint columns="dedup_key" name="uniq_dedup_key"/>
-        </unique-constraints>
     </entity>
 </doctrine-mapping>

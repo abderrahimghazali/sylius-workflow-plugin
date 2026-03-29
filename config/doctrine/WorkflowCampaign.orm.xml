@@ -15,7 +15,7 @@
         <field name="name" type="string" length="255"/>
         <field name="description" type="text" nullable="true"/>
         <field name="enabled" type="boolean"/>
-        <field name="status" type="string" length="20" enumType="Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus"/>
+        <field name="status" type="string" length="20" enum-type="Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus"/>
         <field name="graph" type="json"/>
         <field name="runCount" type="integer" column="run_count"/>
         <field name="lastRunAt" type="datetime_immutable" column="last_run_at" nullable="true"/>
