@@ -86,7 +86,10 @@
                         {% if totalPages > 1 %}
                             <div class="card-footer d-flex align-items-center gap-2 flex-wrap">
                                 <div class="text-muted">
-                                    {{ 'sylius.ui.pagination.number_of_results'|trans({'%from%': ((page - 1) * 20 + 1), '%to%': [page * 20, total]|min, '%total%': total}) }}
+                                    {% set from = (page - 1) * 20 + 1 %}
+                                    {% set to = page * 20 %}
+                                    {% set to = to < total ? to : total %}
+                                    {{ 'sylius.ui.pagination.number_of_results'|trans({'%from%': from, '%to%': to, '%total%': total}) }}
                                 </div>
                                 <div class="ms-auto">
                                     <ul class="pagination m-0">
