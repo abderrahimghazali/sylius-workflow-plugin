@@ -33,7 +33,13 @@ final class WorkflowExecutorTest extends TestCase
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->entityManager->method('persist')->willReturn(null);
+        $this->entityManager->method('persist')->willReturnCallback(function (object $entity): void {
+            // Simulate ID assignment on persist for WorkflowRun
+            if ($entity instanceof WorkflowRun && $entity->getId() === null) {
+                $ref = new \ReflectionProperty(WorkflowRun::class, 'id');
+                $ref->setValue($entity, random_int(1, 99999));
+            }
+        });
         $this->entityManager->method('flush')->willReturn(null);
 
         $this->messageBus = $this->createMock(MessageBusInterface::class);
@@ -241,7 +247,13 @@ final class WorkflowExecutorTest extends TestCase
 
     private function createCampaign(array $graph): WorkflowCampaign
     {
+        static $nextId = 1;
         $campaign = new WorkflowCampaign();
+
+        // Set ID via reflection since entity is not persisted in tests
+        $ref = new \ReflectionProperty(WorkflowCampaign::class, 'id');
+        $ref->setValue($campaign, $nextId++);
+
         $campaign->setName('Test Campaign');
         $campaign->setEnabled(true);
         $campaign->setStatus(WorkflowStatus::Active);
