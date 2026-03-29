@@ -21,7 +21,7 @@ workflow_admin_campaign_create:
 
 workflow_admin_campaign_delete:
     path: /workflows/{id}/delete
-    methods: [POST]
+    methods: [POST, DELETE]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::delete
 
