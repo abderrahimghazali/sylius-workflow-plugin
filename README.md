@@ -207,53 +207,6 @@ If `abderrahimghazali/sylius-loyalty-plugin` is installed, the **Add Loyalty Poi
 
 The **Post-Purchase Upsell** template works independently but can be enhanced with `abderrahimghazali/sylius-upsell-plugin` for product recommendation data.
 
-## Architecture
-
-```
-src/
-├── Api/
-│   ├── TestRunController.php              # Dry-run test endpoint
-│   └── WorkflowGraphController.php        # Save graph JSON endpoint
-├── Controller/Admin/
-│   ├── AnalyticsController.php            # Analytics dashboard
-│   ├── TemplateController.php             # Template browser + install
-│   ├── WorkflowCampaignController.php     # CRUD + toggle
-│   └── WorkflowRunController.php          # Run log + detail
-├── DependencyInjection/
-├── Entity/
-│   ├── WorkflowCampaign.php
-│   ├── WorkflowRun.php
-│   └── WorkflowTriggerLog.php
-├── Enum/                                   # 4 backed string enums
-├── Form/Type/WorkflowCampaignType.php
-├── Graph/
-│   ├── WorkflowContext.php
-│   ├── WorkflowExecutor.php               # Main execution engine
-│   ├── WorkflowGraphValidator.php          # Cycle detection + validation
-│   ├── DryRunWorkflowExecutor.php          # Test run engine
-│   ├── Node/                               # 4 node type classes
-│   ├── Rule/                               # RuleInterface + 6 evaluators
-│   └── Action/                             # ActionInterface + 7 executors
-├── Listener/TriggerListenerManager.php     # Sylius event listener
-├── Menu/AdminMenuListener.php
-├── Messenger/                              # Delayed execution via Messenger
-├── Repository/
-├── Template/                               # 8 pre-built workflow templates
-└── SyliusWorkflowPlugin.php
-
-assets/workflow-editor/
-├── index.js                                # React entry point
-├── App.jsx                                 # Canvas + toolbar + panel + test run
-├── nodes/                                  # 4 custom React Flow node components
-├── panel/                                  # Right config panel components
-├── utils/                                  # Serializer, validator, labels
-└── styles/nodes.css                        # All styles (swp- prefixed)
-
-templates/
-├── admin/                                  # Grid, create, canvas, run log, analytics, templates
-└── email/                                  # 8 workflow email templates + base layout
-```
-
 ## Testing
 
 ```bash
