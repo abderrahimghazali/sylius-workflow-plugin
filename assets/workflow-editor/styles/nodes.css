@@ -217,6 +217,20 @@
     gap: 6px;
 }
 
+.swp-btn--back {
+    padding: 6px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--swp-text-secondary);
+    text-decoration: none;
+}
+
+.swp-btn--back:hover {
+    background: var(--swp-border-light);
+    color: var(--swp-text);
+    border-color: transparent;
+}
+
 .swp-toolbar__title {
     font-size: 15px;
     font-weight: 600;

@@ -9,6 +9,7 @@ if (container) {
     const initialName = container.dataset.workflowName || 'Untitled Workflow';
     const initialStatus = container.dataset.workflowStatus || 'draft';
     const runsUrl = container.dataset.runsUrl || '';
+    const backUrl = container.dataset.backUrl || '';
 
     let initialGraph = { nodes: [], edges: [] };
     try {
@@ -26,6 +27,7 @@ if (container) {
             initialName={initialName}
             initialStatus={initialStatus}
             runsUrl={runsUrl}
+            backUrl={backUrl}
         />
     );
 }

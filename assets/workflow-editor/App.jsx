@@ -89,7 +89,7 @@ const NODE_TYPE_TO_COMPONENT = {
     delay: 'delayNode',
 };
 
-export default function App({ initialGraph, workflowId, apiUrl, initialName, initialStatus, runsUrl }) {
+export default function App({ initialGraph, workflowId, apiUrl, initialName, initialStatus, runsUrl, backUrl }) {
     const { nodes: initNodes, edges: initEdges } = deserializeGraph(initialGraph);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
@@ -434,6 +434,13 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
             {/* ── Toolbar ──────────────────────────────────── */}
             <div className="swp-toolbar">
                 <div className="swp-toolbar__left">
+                    {backUrl && (
+                        <a href={backUrl} className="swp-btn swp-btn--back" title="Back">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                        </a>
+                    )}
                     <span className="swp-toolbar__title">{workflowName}</span>
                 </div>
 
