@@ -12,6 +12,14 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Graph/Node/'
             - '../src/Messenger/DelayedWorkflowMessage.php'
+            - '../src/Repository/'
+
+    # Repository aliases (created by Sylius resource system)
+    Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowCampaignRepository:
+        alias: workflow.repository.campaign
+
+    Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository:
+        alias: workflow.repository.run
 
     # Graph Executor — inject tagged rules and actions
     Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowExecutor:
