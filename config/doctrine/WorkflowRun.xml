@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowRun"
+            table="abderrahim_workflow_run"
+            repository-class="Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository">
+
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <many-to-one field="campaign" target-entity="Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign" inversed-by="runs">
+            <join-column name="campaign_id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="subjectType" type="string" length="50" column="subject_type"/>
+        <field name="subjectId" type="integer" column="subject_id"/>
+        <field name="status" type="string" length="20"/>
+        <field name="currentNodeId" type="string" length="255" column="current_node_id"/>
+        <field name="executionLog" type="json" column="execution_log"/>
+        <field name="startedAt" type="datetime_immutable" column="started_at"/>
+        <field name="completedAt" type="datetime_immutable" column="completed_at" nullable="true"/>
+        <field name="errorMessage" type="text" column="error_message" nullable="true"/>
+    </entity>
+</doctrine-mapping>

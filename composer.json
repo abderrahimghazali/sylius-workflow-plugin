@@ -1,0 +1,50 @@
+{
+    "name": "abderrahimghazali/sylius-workflow-plugin",
+    "type": "sylius-plugin",
+    "description": "Visual marketing automation engine with node-based workflow builder for Sylius 2.x",
+    "license": "MIT",
+    "keywords": ["sylius", "sylius-plugin", "workflow", "automation", "marketing"],
+    "homepage": "https://github.com/abderrahimghazali/sylius-workflow-plugin",
+    "authors": [
+        {
+            "name": "Abderrahim Ghazali",
+            "homepage": "https://github.com/abderrahimghazali"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/abderrahimghazali/sylius-workflow-plugin/issues",
+        "source": "https://github.com/abderrahimghazali/sylius-workflow-plugin"
+    },
+    "require": {
+        "php": "^8.2",
+        "doctrine/orm": "^2.17 || ^3.0",
+        "sylius/sylius": "^2.1",
+        "symfony/framework-bundle": "^7.0",
+        "symfony/messenger": "^7.0",
+        "symfony/http-client": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Abderrahim\\SyliusWorkflowPlugin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Abderrahim\\SyliusWorkflowPlugin\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

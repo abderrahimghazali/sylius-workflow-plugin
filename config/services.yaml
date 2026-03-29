@@ -1,0 +1,20 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Abderrahim\SyliusWorkflowPlugin\:
+        resource: '../src/'
+        exclude:
+            - '../src/SyliusWorkflowPlugin.php'
+            - '../src/Entity/'
+            - '../src/Enum/'
+            - '../src/DependencyInjection/'
+            - '../src/Graph/Node/'
+            - '../src/Messenger/DelayedWorkflowMessage.php'
+
+    # Graph Executor — inject tagged rules and actions
+    Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowExecutor:
+        arguments:
+            $rules: !tagged_iterator sylius_workflow.rule
+            $actions: !tagged_iterator sylius_workflow.action
