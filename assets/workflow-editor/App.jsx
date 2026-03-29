@@ -34,6 +34,8 @@ function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePositi
 
     return (
         <>
+            {/* Invisible wider hit area for hover */}
+            <path d={path} fill="none" stroke="transparent" strokeWidth={40} className="swp-edge-hit-area" />
             <BaseEdge path={path} style={style} />
             <EdgeLabelRenderer>
                 <div
