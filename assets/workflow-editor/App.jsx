@@ -65,7 +65,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 id: generateEdgeId(params.source, params.target),
                 type: 'smoothstep',
                 animated: false,
-                style: { stroke: '#378ADD', strokeWidth: 1.5, opacity: 0.7 },
+                style: { stroke: '#94A3B8', strokeWidth: 1.5 },
             };
             setEdges((eds) => addEdge(edge, eds));
         },
@@ -357,6 +357,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         className={`swp-btn swp-btn--toggle ${status === 'active' ? 'swp-btn--toggle-active' : ''}`}
                         onClick={toggleActivate}
                     >
+                        <span className="swp-toggle-dot" />
                         {status === 'active' ? 'Active' : 'Activate'}
                     </button>
                 </div>
@@ -395,7 +396,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         fitViewOptions={{ padding: 0.3 }}
                         defaultEdgeOptions={{
                             type: 'smoothstep',
-                            style: { stroke: '#378ADD', strokeWidth: 1.5, opacity: 0.7 },
+                            style: { stroke: '#94A3B8', strokeWidth: 1.5 },
                         }}
                     >
                         <Background variant="dots" gap={16} size={1} color="#d0d0d0" />
