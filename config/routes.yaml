@@ -1,6 +1,3 @@
 workflow_admin:
     resource: 'routes/admin.yaml'
     prefix: '/%sylius_admin.path_name%'
-
-workflow_api:
-    resource: 'routes/api.yaml'

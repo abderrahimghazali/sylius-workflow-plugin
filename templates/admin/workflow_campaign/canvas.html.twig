@@ -12,7 +12,7 @@
             id="sylius-workflow-editor"
             data-workflow-id="{{ campaign.id }}"
             data-graph="{{ campaign.graph|json_encode|e('html_attr') }}"
-            data-api-url="/api/v2/admin/workflows/{{ campaign.id }}/graph"
+            data-api-url="{{ path('sylius_workflow_api_save_graph', {id: campaign.id}) }}"
             data-workflow-name="{{ campaign.name|e('html_attr') }}"
             data-workflow-status="{{ campaign.status.value }}"
             style="height: calc(100vh - 60px); position: relative;"
