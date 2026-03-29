@@ -21,6 +21,8 @@ export function deserializeGraph(graph) {
         id: edge.id || `edge-${edge.source}-${edge.target}`,
         source: edge.source,
         target: edge.target,
+        sourceHandle: edge.sourceHandle || null,
+        targetHandle: edge.targetHandle || null,
         type: 'insertButton',
         animated: false,
         style: { stroke: '#94A3B8', strokeWidth: 1.5 },
@@ -44,6 +46,8 @@ export function serializeGraph(nodes, edges) {
         id: edge.id,
         source: edge.source,
         target: edge.target,
+        sourceHandle: edge.sourceHandle || null,
+        targetHandle: edge.targetHandle || null,
     }));
 
     return { nodes: backendNodes, edges: backendEdges };

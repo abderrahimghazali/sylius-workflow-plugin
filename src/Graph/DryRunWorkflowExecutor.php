@@ -76,14 +76,44 @@ final class DryRunWorkflowExecutor
             $results[$currentNodeId] = $result;
 
             if ($result['status'] === 'skipped') {
+                // Check for "otherwise" branch on conditions
+                if ($nodeType === NodeType::Condition) {
+                    $falseNext = $this->getNextNodeId($currentNodeId, $edges, 'exit-false');
+                    if ($falseNext !== null) {
+                        $currentNodeId = $falseNext;
+                        continue;
+                    }
+                }
                 break;
             }
 
-            $nextNodes = $adjacency[$currentNodeId] ?? [];
-            $currentNodeId = !empty($nextNodes) ? $nextNodes[0] : null;
+            if ($nodeType === NodeType::Condition) {
+                $currentNodeId = $this->getNextNodeId($currentNodeId, $edges, 'exit-true')
+                    ?? ($adjacency[$currentNodeId][0] ?? null);
+            } else {
+                $nextNodes = $adjacency[$currentNodeId] ?? [];
+                $currentNodeId = !empty($nextNodes) ? $nextNodes[0] : null;
+            }
         }
 
         return ['path' => $path, 'results' => $results];
+    }
+
+    private function getNextNodeId(string $currentNodeId, array $edges, ?string $sourceHandle): ?string
+    {
+        foreach ($edges as $edge) {
+            if (($edge['source'] ?? '') !== $currentNodeId) {
+                continue;
+            }
+            $edgeHandle = $edge['sourceHandle'] ?? null;
+            if ($sourceHandle !== null && $edgeHandle === $sourceHandle) {
+                return $edge['target'] ?? null;
+            }
+            if ($sourceHandle !== null && $edgeHandle === null) {
+                return $edge['target'] ?? null;
+            }
+        }
+        return null;
     }
 
     /**

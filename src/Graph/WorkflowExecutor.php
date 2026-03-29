@@ -97,15 +97,27 @@ final class WorkflowExecutor
             }
 
             if ($result === false) {
-                // Condition failed or node failed — skip remaining
+                // Condition failed — check for "otherwise" branch
+                if ($nodeType === NodeType::Condition) {
+                    $falseNext = $this->getNextNodeId($currentNodeId, $edges, 'exit-false');
+                    if ($falseNext !== null) {
+                        $currentNodeId = $falseNext;
+                        continue;
+                    }
+                }
                 $run->markCompleted();
                 $this->entityManager->flush();
                 return $run;
             }
 
-            // Move to next node
-            $nextNodes = $adjacency[$currentNodeId] ?? [];
-            $currentNodeId = !empty($nextNodes) ? $nextNodes[0] : null;
+            // Move to next node — for conditions, follow "then" branch
+            if ($nodeType === NodeType::Condition) {
+                $currentNodeId = $this->getNextNodeId($currentNodeId, $edges, 'exit-true')
+                    ?? $this->getNextNodeId($currentNodeId, $edges, null);
+            } else {
+                $nextNodes = $adjacency[$currentNodeId] ?? [];
+                $currentNodeId = !empty($nextNodes) ? $nextNodes[0] : null;
+            }
         }
 
         $run->markCompleted();
@@ -275,6 +287,28 @@ final class WorkflowExecutor
             }
         }
 
+        return null;
+    }
+
+    private function getNextNodeId(string $currentNodeId, array $edges, ?string $sourceHandle = null): ?string
+    {
+        foreach ($edges as $edge) {
+            if (($edge['source'] ?? '') !== $currentNodeId) {
+                continue;
+            }
+            $edgeHandle = $edge['sourceHandle'] ?? null;
+            if ($sourceHandle === null && $edgeHandle === null) {
+                return $edge['target'] ?? null;
+            }
+            // Match specific handle (exit-true / exit-false)
+            if ($sourceHandle !== null && $edgeHandle === $sourceHandle) {
+                return $edge['target'] ?? null;
+            }
+            // Fallback: if no handle specified on edge, treat as default
+            if ($sourceHandle !== null && $edgeHandle === null) {
+                return $edge['target'] ?? null;
+            }
+        }
         return null;
     }
 

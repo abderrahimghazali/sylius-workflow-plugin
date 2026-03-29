@@ -47,6 +47,7 @@ export default function BaseNode({ data, selected }) {
     const config = TYPE_CONFIG[nodeType] || TYPE_CONFIG.action;
     const label = getNodeLabel(nodeType, data.config || {});
     const isTrigger = nodeType === 'trigger';
+    const isCondition = nodeType === 'condition';
 
     return (
         <div className={`swp-node ${config.className} ${selected ? 'swp-node--selected' : ''}`}>
@@ -63,7 +64,20 @@ export default function BaseNode({ data, selected }) {
                 <span className="swp-node__label">{label}</span>
             </div>
 
-            <Handle type="source" position={Position.Bottom} id="exit" />
+            {isCondition ? (
+                <div className="swp-node__branches">
+                    <div className="swp-node__branch swp-node__branch--true">
+                        <span className="swp-node__branch-label">Then</span>
+                        <Handle type="source" position={Position.Bottom} id="exit-true" style={{ left: '30%' }} />
+                    </div>
+                    <div className="swp-node__branch swp-node__branch--false">
+                        <span className="swp-node__branch-label">Otherwise</span>
+                        <Handle type="source" position={Position.Bottom} id="exit-false" style={{ left: '70%' }} />
+                    </div>
+                </div>
+            ) : (
+                <Handle type="source" position={Position.Bottom} id="exit" />
+            )}
         </div>
     );
 }

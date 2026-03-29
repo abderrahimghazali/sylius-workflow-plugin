@@ -109,6 +109,40 @@
     -webkit-box-orient: vertical;
 }
 
+/* ── Condition Branch Handles ────────────────────────────── */
+
+.swp-node__branches {
+    display: flex;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+}
+
+.swp-node__branch {
+    flex: 1;
+    text-align: center;
+    padding: 6px 0 10px;
+    position: relative;
+}
+
+.swp-node__branch--true {
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.swp-node__branch-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.swp-node__branch--true .swp-node__branch-label {
+    color: var(--swp-action);
+}
+
+.swp-node__branch--false .swp-node__branch-label {
+    color: var(--swp-text-tertiary);
+}
+
 /* ── Type Colors ─────────────────────────────────────────── */
 
 .swp-node--trigger {
