@@ -267,31 +267,72 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
 
     const autoArrange = useCallback(() => {
         setNodes((nds) => {
-            // Build adjacency from current edges
-            const adj = {};
+            const nodeMap = {};
+            nds.forEach((n) => { nodeMap[n.id] = n; });
+
+            // Build adjacency per handle
+            const adj = {}; // id -> [{ target, handle }]
             const incoming = {};
             nds.forEach((n) => { adj[n.id] = []; incoming[n.id] = 0; });
             edges.forEach((e) => {
-                if (adj[e.source]) adj[e.source].push(e.target);
+                if (adj[e.source]) adj[e.source].push({ target: e.target, handle: e.sourceHandle || null });
                 if (incoming[e.target] !== undefined) incoming[e.target]++;
             });
 
-            // Topological sort (BFS) — follows the actual flow order
-            const sorted = [];
-            const queue = Object.keys(incoming).filter((id) => incoming[id] === 0);
-            while (queue.length > 0) {
-                const id = queue.shift();
-                sorted.push(id);
-                for (const next of adj[id] || []) {
-                    incoming[next]--;
-                    if (incoming[next] === 0) queue.push(next);
+            // Tree layout via DFS from root
+            const roots = Object.keys(incoming).filter((id) => incoming[id] === 0);
+            const posMap = {};
+            const COL_W = 300;
+            const ROW_H = 160;
+            const visited = new Set();
+
+            function layout(nodeId, row, col) {
+                if (visited.has(nodeId)) return col;
+                visited.add(nodeId);
+                posMap[nodeId] = { x: col * COL_W, y: row * ROW_H + 40 };
+
+                const children = adj[nodeId] || [];
+                const node = nodeMap[nodeId];
+                const isCondition = node && node.data.nodeType === 'condition';
+
+                if (isCondition && children.length >= 2) {
+                    // Find true/false branches
+                    const trueBranch = children.find((c) => c.handle === 'exit-true');
+                    const falseBranch = children.find((c) => c.handle === 'exit-false');
+
+                    let nextCol = col;
+                    if (trueBranch && !visited.has(trueBranch.target)) {
+                        nextCol = layout(trueBranch.target, row + 1, col - 1);
+                    }
+                    if (falseBranch && !visited.has(falseBranch.target)) {
+                        nextCol = layout(falseBranch.target, row + 1, Math.max(nextCol + 1, col + 1));
+                    }
+                    return nextCol;
+                } else {
+                    // Linear: lay out children sequentially
+                    let nextCol = col;
+                    for (const child of children) {
+                        if (!visited.has(child.target)) {
+                            nextCol = layout(child.target, row + 1, col);
+                        }
+                    }
+                    return nextCol;
                 }
             }
-            // Append any remaining nodes not in the graph
-            nds.forEach((n) => { if (!sorted.includes(n.id)) sorted.push(n.id); });
 
-            const posMap = {};
-            sorted.forEach((id, i) => { posMap[id] = { x: 300, y: 40 + i * 160 }; });
+            let startCol = 1;
+            for (const root of roots) {
+                startCol = layout(root, 0, startCol);
+            }
+
+            // Place any unvisited nodes at the end
+            let extraRow = Object.keys(posMap).length;
+            nds.forEach((n) => {
+                if (!posMap[n.id]) {
+                    posMap[n.id] = { x: COL_W, y: extraRow * ROW_H + 40 };
+                    extraRow++;
+                }
+            });
 
             return nds.map((node) => ({
                 ...node,
