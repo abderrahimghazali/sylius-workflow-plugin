@@ -1,0 +1,7 @@
+sylius_resource:
+    resources:
+        workflow.run:
+            driver: doctrine/orm
+            classes:
+                model: Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowRun
+                repository: Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository

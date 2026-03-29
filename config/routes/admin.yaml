@@ -1,0 +1,62 @@
+workflow_admin_campaign_index:
+    resource: |
+        alias: workflow.campaign
+        section: admin
+        grid: workflow_admin_campaign
+        templates: '@SyliusAdmin/shared/crud'
+        only: ['index']
+        vars:
+            all:
+                subheader: workflow.ui.manage_workflows
+            index:
+                icon: git-branch
+    type: sylius.resource
+    prefix: /workflows
+
+workflow_admin_campaign_create:
+    path: /workflows/new
+    methods: [GET, POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::create
+
+workflow_admin_campaign_delete:
+    path: /workflows/{id}/delete
+    methods: [POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::delete
+
+sylius_workflow_admin_canvas:
+    path: /workflows/{id}/edit
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::editCanvas
+
+workflow_admin_campaign_toggle:
+    path: /api/v2/admin/workflows/{id}/toggle
+    methods: [PATCH]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::toggleEnabled
+
+sylius_workflow_api_save_graph:
+    path: /api/v2/admin/workflows/{id}/graph
+    methods: [POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Api\WorkflowGraphController
+
+workflow_admin_run_index:
+    path: /workflows/{id}/runs
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController::index
+
+workflow_admin_run_show:
+    path: /workflows/{campaignId}/runs/{runId}
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController::show
+
+workflow_admin_analytics:
+    path: /workflows/analytics
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\AnalyticsController::index

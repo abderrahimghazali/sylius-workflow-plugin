@@ -1,0 +1,79 @@
+sylius_grid:
+    grids:
+        workflow_admin_campaign:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: '%workflow.model.campaign.class%'
+                    repository:
+                        method: createQueryBuilder
+                        arguments: ['c']
+            sorting:
+                createdAt: desc
+            fields:
+                name:
+                    type: string
+                    label: workflow.ui.name
+                    sortable: ~
+                status:
+                    type: twig
+                    label: workflow.ui.status
+                    options:
+                        template: '@SyliusWorkflowPlugin/admin/workflow_campaign/field/status.html.twig'
+                triggerEvent:
+                    type: twig
+                    label: workflow.ui.trigger_event
+                    options:
+                        template: '@SyliusWorkflowPlugin/admin/workflow_campaign/field/trigger_event.html.twig'
+                runCount:
+                    type: string
+                    label: workflow.ui.run_count
+                    sortable: ~
+                lastRunAt:
+                    type: datetime
+                    label: workflow.ui.last_run_at
+                    sortable: ~
+                    options:
+                        format: 'Y-m-d H:i'
+                enabled:
+                    type: twig
+                    label: sylius.ui.enabled
+                    options:
+                        template: '@SyliusWorkflowPlugin/admin/workflow_campaign/field/enabled_toggle.html.twig'
+            filters:
+                status:
+                    type: select
+                    label: workflow.ui.status
+                    form_options:
+                        choices:
+                            workflow.ui.draft: draft
+                            workflow.ui.active: active
+                            workflow.ui.paused: paused
+                enabled:
+                    type: boolean
+                    label: sylius.ui.enabled
+            actions:
+                item:
+                    edit_canvas:
+                        type: show
+                        label: workflow.ui.edit_canvas
+                        options:
+                            link:
+                                route: sylius_workflow_admin_canvas
+                                parameters:
+                                    id: resource.id
+                    view_runs:
+                        type: show
+                        label: workflow.ui.view_runs
+                        options:
+                            link:
+                                route: workflow_admin_run_index
+                                parameters:
+                                    id: resource.id
+                    delete:
+                        type: delete
+                        options:
+                            link:
+                                route: workflow_admin_campaign_delete
+                                parameters:
+                                    id: resource.id

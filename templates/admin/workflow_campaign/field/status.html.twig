@@ -1,0 +1,9 @@
+{% set status = data %}
+{% set colors = {
+    'draft': 'secondary',
+    'active': 'success',
+    'paused': 'warning',
+} %}
+<span class="badge bg-{{ colors[status.value] ?? 'secondary' }}">
+    {{ ('workflow.ui.' ~ status.value)|trans }}
+</span>

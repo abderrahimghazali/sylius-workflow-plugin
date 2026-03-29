@@ -17,6 +17,7 @@ final class SyliusWorkflowExtension extends Extension
     {
         $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__, 2) . '/config'));
         $loader->load('services.yaml');
+        $loader->load('config.yaml');
 
         $container->registerForAutoconfiguration(RuleInterface::class)
             ->addTag('sylius_workflow.rule');

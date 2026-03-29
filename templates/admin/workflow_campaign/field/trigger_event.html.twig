@@ -1,0 +1,18 @@
+{% set labels = {
+    'order.completed': 'Order completed',
+    'order.cancelled': 'Order cancelled',
+    'order.shipped': 'Order shipped',
+    'cart.abandoned': 'Cart abandoned',
+    'customer.registered': 'Customer registered',
+    'customer.birthday': 'Customer birthday',
+    'loyalty.tier_upgraded': 'Loyalty tier upgraded',
+    'payment.failed': 'Payment failed',
+} %}
+{% set nodes = resource.nodes %}
+{% set trigger_event = '' %}
+{% for node in nodes %}
+    {% if node.type == 'trigger' and node.config.event is defined %}
+        {% set trigger_event = node.config.event %}
+    {% endif %}
+{% endfor %}
+<span>{{ labels[trigger_event] ?? trigger_event }}</span>

@@ -1,17 +1,26 @@
-{% extends '@SyliusAdmin/layout.html.twig' %}
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
 
-{% block title %}Edit Workflow: {{ campaign.name }}{% endblock %}
+{% block title %}{{ 'workflow.ui.edit_canvas'|trans }}: {{ campaign.name }} | {{ parent() }}{% endblock %}
 
-{% block content %}
-<div
-    id="sylius-workflow-editor"
-    data-workflow-id="{{ campaign.id }}"
-    data-graph="{{ campaign.graph|json_encode|e('html_attr') }}"
-    data-api-url="/api/v2/admin/workflows/{{ campaign.id }}/graph"
-    data-workflow-name="{{ campaign.name|e('html_attr') }}"
-    data-workflow-status="{{ campaign.status.value }}"
-    style="height: calc(100vh - 60px); margin: -20px; position: relative;"
-></div>
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
 
-<script src="{{ asset('bundles/syliusworkflowplugin/workflow-editor.js') }}"></script>
+    <div class="page-wrapper">
+        {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+        <div
+            id="sylius-workflow-editor"
+            data-workflow-id="{{ campaign.id }}"
+            data-graph="{{ campaign.graph|json_encode|e('html_attr') }}"
+            data-api-url="/api/v2/admin/workflows/{{ campaign.id }}/graph"
+            data-workflow-name="{{ campaign.name|e('html_attr') }}"
+            data-workflow-status="{{ campaign.status.value }}"
+            style="height: calc(100vh - 60px); position: relative;"
+        ></div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/syliusworkflowplugin/workflow-editor.js') }}"></script>
 {% endblock %}

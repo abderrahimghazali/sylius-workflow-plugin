@@ -1,0 +1,174 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'workflow.ui.analytics'|trans }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
+
+    <div class="page-wrapper">
+        {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+        {% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+        <div class="page-header" data-sticky-header>
+            <div class="container-xl">
+                {{ breadcrumbs([
+                    { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+                    { name: 'workflow.ui.automation_workflows', url: path('workflow_admin_campaign_index'), active: false },
+                    { name: 'workflow.ui.analytics', active: true },
+                ]) }}
+                <div class="row mt-3 row-gap-2">
+                    <div class="col-12 col-md">
+                        <h1 class="page-title">{{ 'workflow.ui.analytics'|trans }}</h1>
+                        <p class="text-secondary">{{ 'workflow.ui.last_30_days'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div class="container-xl">
+                {# Stats cards #}
+                <div class="row row-deck row-cards mb-3">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="subheader">{{ 'workflow.ui.total_runs'|trans }}</div>
+                                </div>
+                                <div class="h1 mb-0">{{ stats.totalRuns }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="subheader">{{ 'workflow.ui.success_rate'|trans }}</div>
+                                </div>
+                                <div class="h1 mb-0">{{ stats.successRate }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="subheader">{{ 'workflow.ui.emails_sent'|trans }}</div>
+                                </div>
+                                <div class="h1 mb-0">{{ stats.emailsSent }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="subheader">{{ 'workflow.ui.coupons_generated'|trans }}</div>
+                                </div>
+                                <div class="h1 mb-0">{{ stats.couponsGenerated }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Daily runs chart #}
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ 'workflow.ui.daily_runs'|trans }}</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="swp-daily-chart" height="80"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Per-campaign breakdown #}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">{{ 'workflow.ui.per_workflow_breakdown'|trans }}</h3>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-vcenter card-table">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'workflow.ui.name'|trans }}</th>
+                                            <th>{{ 'workflow.ui.runs'|trans }}</th>
+                                            <th>{{ 'workflow.ui.success_rate'|trans }}</th>
+                                            <th>{{ 'workflow.ui.emails'|trans }}</th>
+                                            <th>{{ 'workflow.ui.coupons'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in perCampaign %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ path('sylius_workflow_admin_canvas', {id: row.id}) }}">
+                                                        {{ row.name }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ row.runs }}</td>
+                                                <td>{{ row.successRate }}%</td>
+                                                <td>{{ row.emails }}</td>
+                                                <td>{{ row.coupons }}</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="5" class="text-center text-secondary py-4">
+                                                    {{ 'workflow.ui.no_data'|trans }}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include '@SyliusAdmin/shared/crud/common/content/footer.html.twig' %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctx = document.getElementById('swp-daily-chart');
+            if (!ctx) return;
+
+            var dailyData = {{ dailyRuns|json_encode|raw }};
+            var labels = dailyData.map(function (d) { return d.date; });
+            var values = dailyData.map(function (d) { return d.count; });
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '{{ 'workflow.ui.runs'|trans }}',
+                        data: values,
+                        borderColor: '#378ADD',
+                        backgroundColor: 'rgba(55, 138, 221, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } },
+                    },
+                },
+            });
+        });
+    </script>
+{% endblock %}

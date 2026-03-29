@@ -18,3 +18,30 @@ services:
         arguments:
             $rules: !tagged_iterator sylius_workflow.rule
             $actions: !tagged_iterator sylius_workflow.action
+
+    # Menu Listener
+    Abderrahim\SyliusWorkflowPlugin\Menu\AdminMenuListener:
+        tags:
+            - { name: kernel.event_listener, event: sylius.menu.admin.main, method: addWorkflowMenu }
+
+    # Form Types
+    Abderrahim\SyliusWorkflowPlugin\Form\Type\WorkflowCampaignType:
+        tags:
+            - { name: form.type }
+
+    # Controllers
+    Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController:
+        tags:
+            - { name: controller.service_arguments }
+
+    Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowRunController:
+        tags:
+            - { name: controller.service_arguments }
+
+    Abderrahim\SyliusWorkflowPlugin\Controller\Admin\AnalyticsController:
+        tags:
+            - { name: controller.service_arguments }
+
+    Abderrahim\SyliusWorkflowPlugin\Api\WorkflowGraphController:
+        tags:
+            - { name: controller.service_arguments }

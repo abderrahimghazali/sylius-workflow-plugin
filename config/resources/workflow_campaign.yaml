@@ -1,0 +1,7 @@
+sylius_resource:
+    resources:
+        workflow.campaign:
+            driver: doctrine/orm
+            classes:
+                model: Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign
+                repository: Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowCampaignRepository

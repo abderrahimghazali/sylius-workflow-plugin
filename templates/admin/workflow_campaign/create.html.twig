@@ -1,0 +1,71 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'workflow.ui.new_workflow'|trans }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
+
+    <div class="page-wrapper">
+        {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+        {% include '@SyliusAdmin/shared/crud/common/content/flashes.html.twig' %}
+
+        {% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+        <div class="page-header" data-sticky-header>
+            <div class="container-xl">
+                {{ breadcrumbs([
+                    { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+                    { name: 'workflow.ui.automation_workflows', url: path('workflow_admin_campaign_index'), active: false },
+                    { name: 'sylius.ui.new', active: true },
+                ]) }}
+                <div class="row mt-3 row-gap-2">
+                    <div class="col-12 col-md">
+                        <h1 class="page-title">{{ 'workflow.ui.new_workflow'|trans }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div class="container-xl">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                {% form_theme form '@SyliusAdmin/shared/form_theme.html.twig' %}
+                                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                                    {{ form_widget(form) }}
+                                    <div class="d-flex gap-2 mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            {{ 'workflow.ui.create_and_edit'|trans }}
+                                        </button>
+                                        <a href="{{ path('workflow_admin_campaign_index') }}" class="btn btn-outline-secondary">
+                                            {{ 'sylius.ui.cancel'|trans }}
+                                        </a>
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">{{ 'workflow.ui.how_it_works'|trans }}</h3>
+                                <p class="text-secondary">
+                                    {{ 'workflow.ui.create_description'|trans }}
+                                </p>
+                                <ol class="text-secondary" style="font-size: 0.85rem;">
+                                    <li>{{ 'workflow.ui.step_1_name'|trans }}</li>
+                                    <li>{{ 'workflow.ui.step_2_canvas'|trans }}</li>
+                                    <li>{{ 'workflow.ui.step_3_activate'|trans }}</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include '@SyliusAdmin/shared/crud/common/content/footer.html.twig' %}
+    </div>
+{% endblock %}

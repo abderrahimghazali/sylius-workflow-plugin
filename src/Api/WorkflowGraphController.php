@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 final class WorkflowGraphController
@@ -23,11 +22,6 @@ final class WorkflowGraphController
     ) {
     }
 
-    #[Route(
-        path: '/api/v2/admin/workflows/{id}/graph',
-        name: 'sylius_workflow_api_save_graph',
-        methods: ['POST'],
-    )]
     public function __invoke(int $id, Request $request): JsonResponse
     {
         $campaign = $this->entityManager->find(WorkflowCampaign::class, $id);

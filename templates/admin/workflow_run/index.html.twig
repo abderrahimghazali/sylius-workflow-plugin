@@ -1,0 +1,97 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'workflow.ui.run_log'|trans }} — {{ campaign.name }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
+
+    <div class="page-wrapper">
+        {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+        {% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+        <div class="page-header" data-sticky-header>
+            <div class="container-xl">
+                {{ breadcrumbs([
+                    { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+                    { name: 'workflow.ui.automation_workflows', url: path('workflow_admin_campaign_index'), active: false },
+                    { name: campaign.name, url: path('sylius_workflow_admin_canvas', {id: campaign.id}), active: false },
+                    { name: 'workflow.ui.run_log', active: true },
+                ]) }}
+                <div class="row mt-3 row-gap-2">
+                    <div class="col-12 col-md">
+                        <h1 class="page-title">{{ 'workflow.ui.run_log'|trans }} — {{ campaign.name }}</h1>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ path('sylius_workflow_admin_canvas', {id: campaign.id}) }}" class="btn btn-outline-primary">
+                            {{ 'workflow.ui.back_to_canvas'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div class="container-xl">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-vcenter card-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'workflow.ui.run_id'|trans }}</th>
+                                    <th>{{ 'workflow.ui.subject'|trans }}</th>
+                                    <th>{{ 'workflow.ui.status'|trans }}</th>
+                                    <th>{{ 'workflow.ui.started_at'|trans }}</th>
+                                    <th>{{ 'workflow.ui.duration'|trans }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for run in runs %}
+                                    {% set status_colors = {
+                                        'completed': 'success',
+                                        'failed': 'danger',
+                                        'skipped': 'warning',
+                                        'running': 'info',
+                                    } %}
+                                    <tr>
+                                        <td>#{{ run.id }}</td>
+                                        <td>
+                                            {{ run.subjectType|capitalize }} #{{ run.subjectId }}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ status_colors[run.status] ?? 'secondary' }}">
+                                                {{ run.status }}
+                                            </span>
+                                        </td>
+                                        <td>{{ run.startedAt|date('Y-m-d H:i:s') }}</td>
+                                        <td>
+                                            {% if run.completedAt %}
+                                                {{ run.completedAt.timestamp - run.startedAt.timestamp }}s
+                                            {% else %}
+                                                —
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('workflow_admin_run_show', {campaignId: campaign.id, runId: run.id}) }}"
+                                               class="btn btn-sm btn-outline-primary">
+                                                {{ 'workflow.ui.view_details'|trans }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-secondary py-4">
+                                            {{ 'workflow.ui.no_runs_yet'|trans }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include '@SyliusAdmin/shared/crud/common/content/footer.html.twig' %}
+    </div>
+{% endblock %}
