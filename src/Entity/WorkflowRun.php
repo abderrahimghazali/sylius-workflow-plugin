@@ -6,10 +6,11 @@ namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
 use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Sylius\Resource\Model\ResourceInterface;
 
 #[ORM\Entity(repositoryClass: WorkflowRunRepository::class)]
 #[ORM\Table(name: 'abderrahim_workflow_run')]
-class WorkflowRun
+class WorkflowRun implements ResourceInterface
 {
     public const STATUS_RUNNING = 'running';
     public const STATUS_COMPLETED = 'completed';

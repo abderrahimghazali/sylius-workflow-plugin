@@ -9,10 +9,11 @@ use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowCampaignRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Sylius\Resource\Model\ResourceInterface;
 
 #[ORM\Entity(repositoryClass: WorkflowCampaignRepository::class)]
 #[ORM\Table(name: 'abderrahim_workflow_campaign')]
-class WorkflowCampaign
+class WorkflowCampaign implements ResourceInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
