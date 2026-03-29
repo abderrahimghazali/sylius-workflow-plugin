@@ -1,0 +1,15 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>You left something behind!</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>We noticed you left some items in your cart. Don't miss out — your items are waiting for you.</p>
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">Complete Your Order</a>
+        </p>
+        <p>If you have any questions, feel free to reach out to our support team.</p>
+    </div>
+{% endblock %}

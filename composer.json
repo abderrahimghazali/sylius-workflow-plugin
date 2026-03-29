@@ -1,9 +1,9 @@
 {
     "name": "abderrahimghazali/sylius-workflow-plugin",
     "type": "sylius-plugin",
-    "description": "Visual marketing automation engine with node-based workflow builder for Sylius 2.x",
+    "description": "Visual marketing automation with node-based canvas for Sylius 2.x",
     "license": "MIT",
-    "keywords": ["sylius", "sylius-plugin", "workflow", "automation", "marketing"],
+    "keywords": ["sylius", "sylius-plugin", "workflow", "automation", "marketing", "email", "canvas", "node-based"],
     "homepage": "https://github.com/abderrahimghazali/sylius-workflow-plugin",
     "authors": [
         {

@@ -6,6 +6,7 @@ namespace Abderrahim\SyliusWorkflowPlugin\DependencyInjection;
 
 use Abderrahim\SyliusWorkflowPlugin\Graph\Action\ActionInterface;
 use Abderrahim\SyliusWorkflowPlugin\Graph\Rule\RuleInterface;
+use Abderrahim\SyliusWorkflowPlugin\Template\WorkflowTemplateInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -24,5 +25,8 @@ final class SyliusWorkflowExtension extends Extension
 
         $container->registerForAutoconfiguration(ActionInterface::class)
             ->addTag('sylius_workflow.action');
+
+        $container->registerForAutoconfiguration(WorkflowTemplateInterface::class)
+            ->addTag('sylius_workflow.template');
     }
 }

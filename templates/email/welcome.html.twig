@@ -1,0 +1,20 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>Welcome to our store!</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>Thanks for creating an account with us! We're excited to have you on board.</p>
+        <p>Here's what you can look forward to:</p>
+        <ul style="padding-left: 20px; color: #444;">
+            <li>Exclusive member-only offers</li>
+            <li>Order tracking and history</li>
+            <li>Faster checkout experience</li>
+        </ul>
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">Start Shopping</a>
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>There was an issue with your payment</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>We noticed that your recent payment for order {{ order.number|default('#') }} didn't go through. Don't worry — your items are still saved.</p>
+        <p>Common reasons this happens:</p>
+        <ul style="padding-left: 20px; color: #444;">
+            <li>Insufficient funds</li>
+            <li>Card declined by the bank</li>
+            <li>Expired card details</li>
+        </ul>
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">Retry Payment</a>
+        </p>
+        <p>Need help? Contact our support team anytime.</p>
+    </div>
+{% endblock %}

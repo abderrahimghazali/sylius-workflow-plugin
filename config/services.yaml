@@ -45,3 +45,19 @@ services:
     Abderrahim\SyliusWorkflowPlugin\Api\WorkflowGraphController:
         tags:
             - { name: controller.service_arguments }
+
+    Abderrahim\SyliusWorkflowPlugin\Api\TestRunController:
+        tags:
+            - { name: controller.service_arguments }
+
+    # Template browser controller — inject tagged templates
+    Abderrahim\SyliusWorkflowPlugin\Controller\Admin\TemplateController:
+        arguments:
+            $templates: !tagged_iterator sylius_workflow.template
+        tags:
+            - { name: controller.service_arguments }
+
+    # DryRun executor — inject tagged rules
+    Abderrahim\SyliusWorkflowPlugin\Graph\DryRunWorkflowExecutor:
+        arguments:
+            $rules: !tagged_iterator sylius_workflow.rule

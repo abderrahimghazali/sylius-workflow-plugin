@@ -1,0 +1,15 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>Congratulations! You've been upgraded 🏆</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>Great news — you've reached a new loyalty tier! As a thank you for your continued support, we've added <strong>50 bonus points</strong> to your account.</p>
+        <p>Keep earning rewards with every purchase.</p>
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">View My Rewards</a>
+        </p>
+    </div>
+{% endblock %}

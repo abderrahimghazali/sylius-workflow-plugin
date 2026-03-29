@@ -1,0 +1,68 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}{{ 'workflow.ui.workflow_templates'|trans }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    {% include '@SyliusAdmin/shared/crud/common/sidebar.html.twig' %}
+
+    <div class="page-wrapper">
+        {% include '@SyliusAdmin/shared/crud/common/navbar.html.twig' %}
+
+        {% from '@SyliusAdmin/shared/helper/breadcrumbs.html.twig' import breadcrumbs %}
+        <div class="page-header" data-sticky-header>
+            <div class="container-xl">
+                {{ breadcrumbs([
+                    { name: 'sylius.ui.dashboard', url: path('sylius_admin_dashboard'), active: false },
+                    { name: 'workflow.ui.automation_workflows', url: path('workflow_admin_campaign_index'), active: false },
+                    { name: 'workflow.ui.templates', active: true },
+                ]) }}
+                <div class="row mt-3 row-gap-2">
+                    <div class="col-12 col-md">
+                        <h1 class="page-title">{{ 'workflow.ui.workflow_templates'|trans }}</h1>
+                        <p class="text-secondary">{{ 'workflow.ui.templates_description'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div class="container-xl">
+                {% set category_labels = {
+                    'abandoned_cart': 'Cart Recovery',
+                    'loyalty': 'Loyalty',
+                    'review': 'Reviews',
+                    'win_back': 'Win Back',
+                    'onboarding': 'Onboarding',
+                } %}
+
+                <div class="row row-deck row-cards">
+                    {% for template in templates %}
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span style="font-size: 2rem; margin-right: 12px;">{{ template.thumbnailIcon }}</span>
+                                        <div>
+                                            <h3 class="card-title mb-0">{{ template.name }}</h3>
+                                            <span class="badge bg-secondary">{{ category_labels[template.category] ?? template.category }}</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-secondary" style="font-size: 0.85rem; min-height: 40px;">
+                                        {{ template.description }}
+                                    </p>
+                                    <form method="post" action="{{ path('workflow_admin_template_install', {templateClass: template.class|split('\\')|last}) }}">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            {{ 'workflow.ui.install_template'|trans }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% include '@SyliusAdmin/shared/crud/common/content/footer.html.twig' %}
+    </div>
+{% endblock %}

@@ -60,3 +60,21 @@ workflow_admin_analytics:
     methods: [GET]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\AnalyticsController::index
+
+workflow_admin_template_index:
+    path: /workflows/templates
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\TemplateController::index
+
+workflow_admin_template_install:
+    path: /workflows/templates/{templateClass}/install
+    methods: [POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\TemplateController::install
+
+sylius_workflow_api_test_run:
+    path: /api/v2/admin/workflows/{id}/test-run
+    methods: [POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Api\TestRunController

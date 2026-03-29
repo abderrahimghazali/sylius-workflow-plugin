@@ -1,0 +1,16 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>How was your order?</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>We hope you're enjoying your recent purchase (Order {{ order.number|default('#') }}). We'd love to hear your thoughts!</p>
+        <p>Your feedback helps us improve and helps other shoppers make great choices.</p>
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">Leave a Review</a>
+        </p>
+        <p>Thank you for being a valued customer.</p>
+    </div>
+{% endblock %}

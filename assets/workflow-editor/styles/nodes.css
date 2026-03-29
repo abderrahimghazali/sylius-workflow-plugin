@@ -519,3 +519,15 @@
     flex: 1;
     position: relative;
 }
+
+/* ── Test Run Highlights ─────────────────────────────────── */
+
+.swp-test-passed .swp-node {
+    border: 2px solid #0F6E56 !important;
+    box-shadow: 0 0 0 3px rgba(15, 110, 86, 0.15);
+}
+
+.swp-test-skipped .swp-node {
+    border: 2px solid #854F0B !important;
+    box-shadow: 0 0 0 3px rgba(133, 79, 11, 0.15);
+}

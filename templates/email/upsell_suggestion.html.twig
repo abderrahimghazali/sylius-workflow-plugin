@@ -1,0 +1,15 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>You might also like...</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>Thank you for your recent order ({{ order.number|default('#') }}). Based on your purchase, we think you'll love these items:</p>
+        <p>Check out our curated picks that complement what you've already bought.</p>
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">View Suggestions</a>
+        </p>
+    </div>
+{% endblock %}

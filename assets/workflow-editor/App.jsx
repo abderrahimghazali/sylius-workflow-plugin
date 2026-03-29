@@ -41,6 +41,11 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
     const [workflowName, setWorkflowName] = useState(initialName || 'Untitled Workflow');
     const [status, setStatus] = useState(initialStatus || 'draft');
     const [errors, setErrors] = useState([]);
+    const [testRunModal, setTestRunModal] = useState(false);
+    const [testSubjectType, setTestSubjectType] = useState('order');
+    const [testSubjectId, setTestSubjectId] = useState('');
+    const [testRunning, setTestRunning] = useState(false);
+    const [testResults, setTestResults] = useState(null);
     const [toast, setToast] = useState(null);
     const [addMenuOpen, setAddMenuOpen] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -230,6 +235,61 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
         }
     }, [status, nodes, edges, apiUrl, workflowName, showToast]);
 
+    // ── Test run ─────────────────────────────────────────────
+
+    const runTest = useCallback(async () => {
+        if (!testSubjectId) return;
+        setTestRunning(true);
+        setTestResults(null);
+
+        try {
+            const testUrl = apiUrl.replace('/graph', '/test-run');
+            const response = await fetch(testUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subjectType: testSubjectType, subjectId: parseInt(testSubjectId, 10) }),
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                showToast('error', err.error || 'Test run failed.');
+                setTestRunning(false);
+                return;
+            }
+
+            const data = await response.json();
+            setTestResults(data);
+
+            // Highlight nodes on canvas
+            setNodes((nds) =>
+                nds.map((n) => {
+                    const result = data.results[n.id];
+                    if (!result) return { ...n, className: '' };
+                    const cls = result.status === 'passed' ? 'swp-test-passed'
+                        : result.status === 'dry_run' ? 'swp-test-passed'
+                        : result.status === 'skipped' ? 'swp-test-skipped'
+                        : '';
+                    return { ...n, className: cls };
+                })
+            );
+
+            // Animate traversed edges
+            const pathSet = new Set(data.path);
+            setEdges((eds) =>
+                eds.map((e) => ({
+                    ...e,
+                    animated: pathSet.has(e.source) && pathSet.has(e.target),
+                }))
+            );
+
+            showToast('success', 'Test run completed.');
+        } catch (err) {
+            showToast('error', 'Test run failed: ' + err.message);
+        } finally {
+            setTestRunning(false);
+        }
+    }, [testSubjectType, testSubjectId, apiUrl, setNodes, setEdges, showToast]);
+
     // ── Status badge class ──────────────────────────────────
 
     const badgeClass = `swp-toolbar__badge ${
@@ -281,7 +341,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         ↕ Auto-arrange
                     </button>
 
-                    <button className="swp-btn" disabled title="Coming in Phase 4">
+                    <button className="swp-btn" onClick={() => setTestRunModal(true)}>
                         🧪 Test Run
                     </button>
 
@@ -357,6 +417,75 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                     />
                 )}
             </div>
+
+            {/* ── Test Run Modal ────────────────────────────── */}
+            {testRunModal && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999,
+                }} onClick={() => setTestRunModal(false)}>
+                    <div style={{
+                        background: '#fff', borderRadius: '10px', padding: '24px',
+                        width: '360px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: 600 }}>
+                            Test Run
+                        </h3>
+                        <label className="swp-panel__label">Subject Type</label>
+                        <select
+                            className="swp-panel__select"
+                            value={testSubjectType}
+                            onChange={(e) => setTestSubjectType(e.target.value)}
+                            style={{ marginBottom: '12px' }}
+                        >
+                            <option value="order">Order</option>
+                            <option value="customer">Customer</option>
+                        </select>
+                        <label className="swp-panel__label">Subject ID</label>
+                        <input
+                            className="swp-panel__input"
+                            type="number"
+                            value={testSubjectId}
+                            onChange={(e) => setTestSubjectId(e.target.value)}
+                            placeholder="e.g. 12345"
+                            style={{ marginBottom: '16px' }}
+                        />
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <button
+                                className="swp-btn swp-btn--primary"
+                                onClick={runTest}
+                                disabled={testRunning || !testSubjectId}
+                                style={{ flex: 1 }}
+                            >
+                                {testRunning ? 'Running...' : 'Run Test'}
+                            </button>
+                            <button
+                                className="swp-btn"
+                                onClick={() => setTestRunModal(false)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                        {testResults && (
+                            <div style={{ marginTop: '16px', fontSize: '11px' }}>
+                                <strong>Execution path:</strong>
+                                <div style={{ marginTop: '6px' }}>
+                                    {testResults.path.map((nodeId, i) => {
+                                        const r = testResults.results[nodeId];
+                                        const color = r?.status === 'passed' || r?.status === 'dry_run' ? '#0F6E56'
+                                            : r?.status === 'skipped' ? '#854F0B' : '#666';
+                                        return (
+                                            <div key={nodeId} style={{ padding: '3px 0', color }}>
+                                                {i + 1}. {nodeId} — {r?.message}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* ── Toast ────────────────────────────────────── */}
             {toast && (

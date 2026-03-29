@@ -1,0 +1,21 @@
+{% extends '@SyliusWorkflowPlugin/email/_base.html.twig' %}
+
+{% block content %}
+    <div class="header">
+        <h1>We miss you!</h1>
+    </div>
+    <div class="body">
+        <p>Hi {{ customer.firstName|default('there') }},</p>
+        <p>It's been a while since your last visit. We'd love to see you back!</p>
+        <p>Here's a special discount just for you:</p>
+        {% if coupon is defined and coupon.code is defined %}
+            <div class="coupon-box">
+                <div style="font-size: 12px; color: #666; margin-bottom: 4px;">Your coupon code</div>
+                <div class="coupon-code">{{ coupon.code }}</div>
+            </div>
+        {% endif %}
+        <p style="text-align: center; margin: 24px 0;">
+            <a href="#" class="btn">Shop Now</a>
+        </p>
+    </div>
+{% endblock %}
