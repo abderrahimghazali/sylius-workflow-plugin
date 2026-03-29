@@ -201,11 +201,11 @@ bin/console assets:install public
 
 ### Loyalty Plugin
 
-If `abderrahimghazali/sylius-loyalty-plugin` is installed, the **Add Loyalty Points** action dispatches events to it. If not installed, the action logs a warning and skips gracefully.
+If [`abderrahimghazali/sylius-loyalty-plugin`](https://github.com/abderrahimghazali/sylius-loyalty-plugin) is installed, the **Add Loyalty Points** action dispatches events to it. If not installed, the action logs a warning and skips gracefully.
 
 ### Upsell Plugin
 
-The **Post-Purchase Upsell** template works independently but can be enhanced with `abderrahimghazali/sylius-upsell-plugin` for product recommendation data.
+The **Post-Purchase Upsell** template works independently but can be enhanced with [`abderrahimghazali/sylius-upsell-plugin`](https://github.com/abderrahimghazali/sylius-upsell-plugin) for product recommendation data.
 
 ## Testing
 
