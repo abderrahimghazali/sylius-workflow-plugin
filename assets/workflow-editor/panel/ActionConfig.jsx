@@ -1,5 +1,16 @@
 import { ACTION_TYPE_LABELS } from '../utils/nodeLabels';
 
+const EMAIL_TEMPLATES = {
+    '@SyliusWorkflowPlugin/email/abandoned_cart.html.twig': 'Abandoned Cart Recovery',
+    '@SyliusWorkflowPlugin/email/review_request.html.twig': 'Post-Purchase Review Request',
+    '@SyliusWorkflowPlugin/email/win_back.html.twig': 'Win Back / Coupon Offer',
+    '@SyliusWorkflowPlugin/email/birthday_coupon.html.twig': 'Birthday Coupon',
+    '@SyliusWorkflowPlugin/email/tier_upgrade.html.twig': 'Loyalty Tier Upgrade',
+    '@SyliusWorkflowPlugin/email/welcome.html.twig': 'New Customer Welcome',
+    '@SyliusWorkflowPlugin/email/upsell_suggestion.html.twig': 'Upsell Suggestion',
+    '@SyliusWorkflowPlugin/email/payment_failed_recovery.html.twig': 'Payment Failed Recovery',
+};
+
 export default function ActionConfig({ config, onChange }) {
     const update = (field, value) => onChange({ ...config, [field]: value });
     const actionType = config.type || '';
@@ -24,13 +35,16 @@ export default function ActionConfig({ config, onChange }) {
                 <>
                     <div className="swp-panel__section">
                         <label className="swp-panel__label">Email Template</label>
-                        <input
-                            className="swp-panel__input"
-                            type="text"
+                        <select
+                            className="swp-panel__select"
                             value={config.template || ''}
                             onChange={(e) => update('template', e.target.value)}
-                            placeholder="@SyliusWorkflowPlugin/email/template.html.twig"
-                        />
+                        >
+                            <option value="">Select a template...</option>
+                            {Object.entries(EMAIL_TEMPLATES).map(([value, label]) => (
+                                <option key={value} value={value}>{label}</option>
+                            ))}
+                        </select>
                     </div>
                     <div className="swp-panel__section">
                         <label className="swp-panel__label">Subject</label>
