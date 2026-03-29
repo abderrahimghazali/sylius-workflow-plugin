@@ -51,7 +51,7 @@ sylius_grid:
                                 route: workflow_admin_campaign_create
                 item:
                     edit_canvas:
-                        type: show
+                        type: update
                         label: workflow.ui.edit_canvas
                         options:
                             link:
