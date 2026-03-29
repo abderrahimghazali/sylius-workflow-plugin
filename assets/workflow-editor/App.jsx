@@ -258,13 +258,39 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
     // ── Auto-arrange ────────────────────────────────────────
 
     const autoArrange = useCallback(() => {
-        setNodes((nds) =>
-            nds.map((node, index) => ({
+        setNodes((nds) => {
+            // Build adjacency from current edges
+            const adj = {};
+            const incoming = {};
+            nds.forEach((n) => { adj[n.id] = []; incoming[n.id] = 0; });
+            edges.forEach((e) => {
+                if (adj[e.source]) adj[e.source].push(e.target);
+                if (incoming[e.target] !== undefined) incoming[e.target]++;
+            });
+
+            // Topological sort (BFS) — follows the actual flow order
+            const sorted = [];
+            const queue = Object.keys(incoming).filter((id) => incoming[id] === 0);
+            while (queue.length > 0) {
+                const id = queue.shift();
+                sorted.push(id);
+                for (const next of adj[id] || []) {
+                    incoming[next]--;
+                    if (incoming[next] === 0) queue.push(next);
+                }
+            }
+            // Append any remaining nodes not in the graph
+            nds.forEach((n) => { if (!sorted.includes(n.id)) sorted.push(n.id); });
+
+            const posMap = {};
+            sorted.forEach((id, i) => { posMap[id] = { x: 300, y: 40 + i * 160 }; });
+
+            return nds.map((node) => ({
                 ...node,
-                position: { x: 300, y: 40 + index * 160 },
-            }))
-        );
-    }, [setNodes]);
+                position: posMap[node.id] || node.position,
+            }));
+        });
+    }, [setNodes, edges]);
 
     // ── Save ────────────────────────────────────────────────
 
