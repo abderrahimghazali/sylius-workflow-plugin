@@ -1,6 +1,7 @@
 workflow:
     ui:
         automation_workflows: 'Automation Workflows'
+        campaigns: 'Automation Workflows'
         manage_workflows: 'Manage your marketing automation workflows'
         name: 'Name'
         description: 'Description'
