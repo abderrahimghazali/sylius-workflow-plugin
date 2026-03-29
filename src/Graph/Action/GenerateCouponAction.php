@@ -33,6 +33,7 @@ final class GenerateCouponAction implements ActionInterface
         $expiresInDays = (int) ($config['expires_in_days'] ?? 30);
 
         try {
+            /** @var \Sylius\Component\Promotion\Model\PromotionInterface|null $promotion */
             $promotion = $this->promotionRepository->findOneBy(['code' => $promotionCode]);
             if ($promotion === null) {
                 return ['success' => false, 'message' => sprintf('Promotion "%s" not found.', $promotionCode)];

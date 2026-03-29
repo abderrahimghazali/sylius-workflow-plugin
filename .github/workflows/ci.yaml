@@ -69,7 +69,6 @@ jobs:
                   node-version: ${{ matrix.node }}
 
             - name: Install dependencies
-              working-directory: assets
               run: npm install
 
             - name: Build

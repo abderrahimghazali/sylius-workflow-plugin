@@ -88,8 +88,6 @@ final class WorkflowCampaignController
         $this->entityManager->remove($campaign);
         $this->entityManager->flush();
 
-        $request->getSession()->getFlashBag()->add('success', 'Workflow deleted successfully.');
-
         return new RedirectResponse($this->router->generate('workflow_admin_campaign_index'));
     }
 

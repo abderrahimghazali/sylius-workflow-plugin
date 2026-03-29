@@ -6,7 +6,6 @@ namespace Abderrahim\SyliusWorkflowPlugin\Graph\Action;
 
 use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowContext;
 use Doctrine\ORM\EntityManagerInterface;
-use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 
 final class AddCustomerTagAction implements ActionInterface
@@ -37,21 +36,22 @@ final class AddCustomerTagAction implements ActionInterface
             return ['success' => false, 'message' => 'Customer entity does not support tags.'];
         }
 
+        /** @phpstan-ignore-next-line */
         $customer->addTag($tag);
         $this->entityManager->flush();
 
         return ['success' => true, 'message' => sprintf('Tag "%s" added to customer.', $tag)];
     }
 
-    private function resolveCustomer(WorkflowContext $context): ?CustomerInterface
+    private function resolveCustomer(WorkflowContext $context): ?object
     {
         $subject = $context->getSubject();
 
-        if ($subject instanceof CustomerInterface) {
+        if (method_exists($subject, 'getEmail')) {
             return $subject;
         }
 
-        if ($subject instanceof OrderInterface) {
+        if ($subject instanceof OrderInterface && $subject->getCustomer() !== null) {
             return $subject->getCustomer();
         }
 

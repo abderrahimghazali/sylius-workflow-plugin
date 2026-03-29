@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Controller\Admin;
 
-use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowCampaignRepository;
 use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -15,7 +14,6 @@ final class AnalyticsController
 {
     public function __construct(
         private readonly WorkflowRunRepository $runRepository,
-        private readonly WorkflowCampaignRepository $campaignRepository,
         private readonly Environment $twig,
     ) {
     }

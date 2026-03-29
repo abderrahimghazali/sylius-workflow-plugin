@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Abderrahim\SyliusWorkflowPlugin\Graph\Rule;
 
 use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowContext;
-use Sylius\Component\Core\Model\CustomerInterface;
+use Sylius\Component\Core\Model\CustomerInterface as CoreCustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 
@@ -26,10 +26,11 @@ final class CustomerFirstOrderRule implements RuleInterface
         $subject = $context->getSubject();
         $customer = null;
 
-        if ($subject instanceof CustomerInterface) {
+        if ($subject instanceof CoreCustomerInterface) {
             $customer = $subject;
         } elseif ($subject instanceof OrderInterface) {
-            $customer = $subject->getCustomer();
+            $c = $subject->getCustomer();
+            $customer = $c instanceof CoreCustomerInterface ? $c : null;
         }
 
         if ($customer === null) {

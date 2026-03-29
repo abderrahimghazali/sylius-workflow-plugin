@@ -32,12 +32,13 @@ final class AddOrderNoteAction implements ActionInterface
             return ['success' => false, 'message' => 'Subject is not an order.'];
         }
 
-        if (!method_exists($subject, 'addNote') && !method_exists($subject, 'setNotes')) {
+        if (method_exists($subject, 'setNotes')) {
+            /** @phpstan-ignore-next-line */
             $subject->setNotes(
                 ($subject->getNotes() ?? '') . "\n[Workflow] " . $note
             );
         } else {
-            $subject->addNote('[Workflow] ' . $note);
+            return ['success' => false, 'message' => 'Order entity does not support notes.'];
         }
 
         $this->entityManager->flush();
