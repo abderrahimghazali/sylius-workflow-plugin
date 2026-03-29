@@ -1,0 +1,17 @@
+workflow_admin_campaign_toggle:
+    path: /api/v2/admin/workflows/{id}/toggle
+    methods: [PATCH]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\WorkflowCampaignController::toggleEnabled
+
+sylius_workflow_api_save_graph:
+    path: /api/v2/admin/workflows/{id}/graph
+    methods: [POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Api\WorkflowGraphController
+
+sylius_workflow_api_test_run:
+    path: /api/v2/admin/workflows/{id}/test-run
+    methods: [POST]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Api\TestRunController
