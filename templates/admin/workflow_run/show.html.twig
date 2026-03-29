@@ -31,118 +31,110 @@
         <div class="page-body">
             <div class="container-xl">
                 {# Run summary card #}
-                <div class="row mb-3">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <strong>{{ 'workflow.ui.status'|trans }}</strong><br>
-                                        {% set status_colors = {
-                                            'completed': 'success',
-                                            'failed': 'danger',
-                                            'skipped': 'warning',
-                                            'running': 'info',
-                                        } %}
-                                        <span class="badge bg-{{ status_colors[run.status] ?? 'secondary' }}">
-                                            {{ run.status }}
-                                        </span>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <strong>{{ 'workflow.ui.subject'|trans }}</strong><br>
-                                        {{ run.subjectType|capitalize }} #{{ run.subjectId }}
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <strong>{{ 'workflow.ui.started_at'|trans }}</strong><br>
-                                        {{ run.startedAt|date('Y-m-d H:i:s') }}
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <strong>{{ 'workflow.ui.completed_at'|trans }}</strong><br>
-                                        {{ run.completedAt ? run.completedAt|date('Y-m-d H:i:s') : '—' }}
-                                    </div>
-                                </div>
-                                {% if run.errorMessage %}
-                                    <div class="alert alert-danger mt-3 mb-0">
-                                        <strong>{{ 'workflow.ui.error'|trans }}:</strong> {{ run.errorMessage }}
-                                    </div>
-                                {% endif %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <strong>{{ 'workflow.ui.status'|trans }}</strong><br>
+                                {% set status_colors = {
+                                    'completed': 'success',
+                                    'failed': 'danger',
+                                    'skipped': 'warning',
+                                    'running': 'info',
+                                } %}
+                                <span class="badge text-white bg-{{ status_colors[run.status] ?? 'secondary' }}">
+                                    {{ run.status }}
+                                </span>
+                            </div>
+                            <div class="col-sm-3">
+                                <strong>{{ 'workflow.ui.subject'|trans }}</strong><br>
+                                {{ run.subjectType|capitalize }} #{{ run.subjectId }}
+                            </div>
+                            <div class="col-sm-3">
+                                <strong>{{ 'workflow.ui.started_at'|trans }}</strong><br>
+                                {{ run.startedAt|date('Y-m-d H:i:s') }}
+                            </div>
+                            <div class="col-sm-3">
+                                <strong>{{ 'workflow.ui.completed_at'|trans }}</strong><br>
+                                {{ run.completedAt ? run.completedAt|date('Y-m-d H:i:s') : '—' }}
                             </div>
                         </div>
+                        {% if run.errorMessage %}
+                            <div class="alert alert-danger mt-3 mb-0">
+                                <strong>{{ 'workflow.ui.error'|trans }}:</strong> {{ run.errorMessage }}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
                 {# Execution timeline #}
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">{{ 'workflow.ui.execution_timeline'|trans }}</h3>
-                            </div>
-                            <div class="card-body p-0">
-                                {% set node_icons = {
-                                    'trigger': '⚡',
-                                    'condition': '🔀',
-                                    'action': '▶',
-                                    'delay': '⏳',
-                                } %}
-                                {% set log_status_colors = {
-                                    'passed': 'success',
-                                    'completed': 'success',
-                                    'failed': 'danger',
-                                    'skipped': 'warning',
-                                    'delayed': 'info',
-                                } %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ 'workflow.ui.execution_timeline'|trans }}</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        {% set node_icons = {
+                            'trigger': '⚡',
+                            'condition': '🔀',
+                            'action': '▶',
+                            'delay': '⏳',
+                        } %}
+                        {% set log_status_colors = {
+                            'passed': 'success',
+                            'completed': 'success',
+                            'failed': 'danger',
+                            'skipped': 'warning',
+                            'delayed': 'info',
+                        } %}
 
-                                {% set nodes_map = {} %}
-                                {% for node in campaign.nodes %}
-                                    {% set nodes_map = nodes_map|merge({ (node.id): node }) %}
+                        {% set nodes_map = {} %}
+                        {% for node in campaign.nodes %}
+                            {% set nodes_map = nodes_map|merge({ (node.id): node }) %}
+                        {% endfor %}
+
+                        <table class="table table-vcenter card-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th>{{ 'workflow.ui.node'|trans }}</th>
+                                    <th>{{ 'workflow.ui.status'|trans }}</th>
+                                    <th>{{ 'workflow.ui.message'|trans }}</th>
+                                    <th>{{ 'workflow.ui.timestamp'|trans }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in run.executionLog %}
+                                    {% set node = nodes_map[entry.nodeId] ?? null %}
+                                    {% set node_type = node ? node.type : 'action' %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <span style="font-size: 1.2rem;">{{ node_icons[node_type] ?? '●' }}</span>
+                                        </td>
+                                        <td>
+                                            <strong>{{ entry.nodeId }}</strong>
+                                            {% if node %}
+                                                <br><small class="text-secondary">{{ node_type|capitalize }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge text-white bg-{{ log_status_colors[entry.status] ?? 'secondary' }}">
+                                                {{ entry.status }}
+                                            </span>
+                                        </td>
+                                        <td>{{ entry.message }}</td>
+                                        <td>
+                                            <small class="text-secondary">{{ entry.timestamp|slice(0, 19)|replace({'T': ' '}) }}</small>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-secondary py-4">
+                                            {{ 'workflow.ui.no_log_entries'|trans }}
+                                        </td>
+                                    </tr>
                                 {% endfor %}
-
-                                <table class="table table-vcenter card-table mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 40px;"></th>
-                                            <th>{{ 'workflow.ui.node'|trans }}</th>
-                                            <th>{{ 'workflow.ui.status'|trans }}</th>
-                                            <th>{{ 'workflow.ui.message'|trans }}</th>
-                                            <th>{{ 'workflow.ui.timestamp'|trans }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for entry in run.executionLog %}
-                                            {% set node = nodes_map[entry.nodeId] ?? null %}
-                                            {% set node_type = node ? node.type : 'action' %}
-                                            <tr>
-                                                <td class="text-center">
-                                                    <span style="font-size: 1.2rem;">{{ node_icons[node_type] ?? '●' }}</span>
-                                                </td>
-                                                <td>
-                                                    <strong>{{ entry.nodeId }}</strong>
-                                                    {% if node %}
-                                                        <br><small class="text-secondary">{{ node_type|capitalize }}</small>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-{{ log_status_colors[entry.status] ?? 'secondary' }}">
-                                                        {{ entry.status }}
-                                                    </span>
-                                                </td>
-                                                <td>{{ entry.message }}</td>
-                                                <td>
-                                                    <small class="text-secondary">{{ entry.timestamp }}</small>
-                                                </td>
-                                            </tr>
-                                        {% else %}
-                                            <tr>
-                                                <td colspan="5" class="text-center text-secondary py-4">
-                                                    {{ 'workflow.ui.no_log_entries'|trans }}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
