@@ -35,17 +35,7 @@ function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePositi
 
     return (
         <>
-            {/* Invisible wider hit area for hover detection */}
-            <path
-                d={path}
-                fill="none"
-                stroke="transparent"
-                strokeWidth={40}
-                onMouseEnter={() => data?.onEdgeHover(id)}
-                onMouseLeave={() => data?.onEdgeHover(null)}
-                style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-            />
-            <BaseEdge path={path} style={style} />
+            <BaseEdge path={path} style={style} interactionWidth={30} />
             <EdgeLabelRenderer>
                 <div
                     className="swp-edge-label"
@@ -56,8 +46,6 @@ function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePositi
                     <button
                         className={`swp-edge-add-btn ${isHovered || showMenu ? 'swp-edge-add-btn--visible' : ''} ${showMenu ? 'swp-edge-add-btn--active' : ''}`}
                         onClick={(e) => { e.stopPropagation(); data?.onInsertClick(id); }}
-                        onMouseEnter={() => data?.onEdgeHover(id)}
-                        onMouseLeave={() => { if (!showMenu) data?.onEdgeHover(null); }}
                     >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                             <line x1="12" y1="5" x2="12" y2="19" />
@@ -436,7 +424,6 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 hoveredEdgeId,
                 onInsertClick: (edgeId) => setInsertEdgeId((prev) => prev === edgeId ? null : edgeId),
                 onInsert: insertNodeOnEdge,
-                onEdgeHover: setHoveredEdgeId,
             },
         })),
         [edges, insertEdgeId, hoveredEdgeId, insertNodeOnEdge]
@@ -539,6 +526,8 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         onConnect={onConnect}
                         onNodeClick={onNodeClick}
                         onPaneClick={onPaneClick}
+                        onEdgeMouseEnter={useCallback((_e, edge) => setHoveredEdgeId(edge.id), [])}
+                        onEdgeMouseLeave={useCallback(() => setHoveredEdgeId(null), [])}
                         fitView
                         fitViewOptions={{ padding: 0.5, maxZoom: 1 }}
                         defaultEdgeOptions={{
