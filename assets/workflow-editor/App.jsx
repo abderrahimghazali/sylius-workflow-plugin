@@ -201,6 +201,12 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
 
     const addNode = useCallback(
         (nodeType) => {
+            if (nodeType === 'trigger' && nodes.some((n) => n.data.nodeType === 'trigger')) {
+                showToast('error', 'A workflow can only have one trigger node.');
+                setAddMenuOpen(false);
+                return;
+            }
+
             const id = generateNodeId();
             const yPositions = nodes.map((n) => n.position.y);
             const maxY = yPositions.length > 0 ? Math.max(...yPositions) : -120;
