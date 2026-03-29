@@ -69,3 +69,11 @@ services:
     Abderrahim\SyliusWorkflowPlugin\Graph\DryRunWorkflowExecutor:
         arguments:
             $rules: !tagged_iterator sylius_workflow.rule
+
+    # GenerateCouponAction — inject Sylius services
+    Abderrahim\SyliusWorkflowPlugin\Graph\Action\GenerateCouponAction:
+        arguments:
+            $promotionRepository: '@sylius.repository.promotion'
+            $couponFactory: '@sylius.factory.promotion_coupon'
+            $promotionFactory: '@sylius.factory.promotion'
+            $channelRepository: '@sylius.repository.channel'
