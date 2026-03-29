@@ -40,8 +40,13 @@ export default function ConditionConfig({ config, onChange }) {
                     type={isNumericRule(config.rule) ? 'number' : 'text'}
                     value={config.value || ''}
                     onChange={(e) => update('value', e.target.value)}
-                    placeholder="Enter value..."
+                    placeholder={config.rule === 'order_total' ? 'e.g. 5000 ($50.00)' : 'Enter value...'}
                 />
+                {config.rule === 'order_total' && (
+                    <div className="swp-panel__preview" style={{ marginTop: '6px' }}>
+                        Value is in cents (e.g. 5000 = $50.00)
+                    </div>
+                )}
             </div>
 
             <div className="swp-panel__section">

@@ -20,6 +20,7 @@ final class GenerateCouponAction implements ActionInterface
         private readonly PromotionRepositoryInterface $promotionRepository,
         private readonly PromotionCouponFactoryInterface $couponFactory,
         private readonly FactoryInterface $promotionFactory,
+        private readonly FactoryInterface $promotionActionFactory,
         private readonly ChannelRepositoryInterface $channelRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
@@ -89,7 +90,8 @@ final class GenerateCouponAction implements ActionInterface
         }
 
         // Add percentage discount action
-        $action = new \Sylius\Component\Promotion\Model\PromotionAction();
+        /** @var \Sylius\Component\Promotion\Model\PromotionActionInterface $action */
+        $action = $this->promotionActionFactory->createNew();
         $action->setType('order_percentage_discount');
         $action->setConfiguration(['percentage' => $discountPercent / 100]);
         $promotion->addAction($action);

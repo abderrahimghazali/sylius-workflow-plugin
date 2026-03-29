@@ -82,4 +82,5 @@ services:
             $promotionRepository: '@sylius.repository.promotion'
             $couponFactory: '@sylius.factory.promotion_coupon'
             $promotionFactory: '@sylius.factory.promotion'
+            $promotionActionFactory: '@sylius.factory.promotion_action'
             $channelRepository: '@sylius.repository.channel'
