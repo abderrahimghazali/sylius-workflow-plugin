@@ -8,6 +8,7 @@ if (container) {
     const apiUrl = container.dataset.apiUrl;
     const initialName = container.dataset.workflowName || 'Untitled Workflow';
     const initialStatus = container.dataset.workflowStatus || 'draft';
+    const runsUrl = container.dataset.runsUrl || '';
 
     let initialGraph = { nodes: [], edges: [] };
     try {
@@ -24,6 +25,7 @@ if (container) {
             apiUrl={apiUrl}
             initialName={initialName}
             initialStatus={initialStatus}
+            runsUrl={runsUrl}
         />
     );
 }

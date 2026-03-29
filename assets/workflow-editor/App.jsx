@@ -32,7 +32,7 @@ const NODE_TYPE_TO_COMPONENT = {
     delay: 'delayNode',
 };
 
-export default function App({ initialGraph, workflowId, apiUrl, initialName, initialStatus }) {
+export default function App({ initialGraph, workflowId, apiUrl, initialName, initialStatus, runsUrl }) {
     const { nodes: initNodes, edges: initEdges } = deserializeGraph(initialGraph);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
@@ -344,6 +344,12 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                     <button className="swp-btn" onClick={() => setTestRunModal(true)}>
                         🧪 Test Run
                     </button>
+
+                    {runsUrl && (
+                        <a href={runsUrl} className="swp-btn" style={{ textDecoration: 'none' }}>
+                            📋 View Runs
+                        </a>
+                    )}
 
                     <button
                         className="swp-btn swp-btn--primary"

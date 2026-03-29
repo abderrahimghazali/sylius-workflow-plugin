@@ -15,6 +15,7 @@
             data-api-url="{{ path('sylius_workflow_api_save_graph', {id: campaign.id}) }}"
             data-workflow-name="{{ campaign.name|e('html_attr') }}"
             data-workflow-status="{{ campaign.status.value }}"
+            data-runs-url="{{ path('workflow_admin_run_index', {id: campaign.id}) }}"
             style="height: calc(100vh - 60px); position: relative;"
         ></div>
     </div>
