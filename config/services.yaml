@@ -70,6 +70,12 @@ services:
         arguments:
             $rules: !tagged_iterator sylius_workflow.rule
 
+    # SendEmailAction — inject Sylius sender config
+    Abderrahim\SyliusWorkflowPlugin\Graph\Action\SendEmailAction:
+        arguments:
+            $senderAddress: '%sylius.mailer.sender_address%'
+            $senderName: '%sylius.mailer.sender_name%'
+
     # GenerateCouponAction — inject Sylius services
     Abderrahim\SyliusWorkflowPlugin\Graph\Action\GenerateCouponAction:
         arguments:

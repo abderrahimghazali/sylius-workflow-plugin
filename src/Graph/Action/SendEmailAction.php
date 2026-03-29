@@ -7,6 +7,7 @@ namespace Abderrahim\SyliusWorkflowPlugin\Graph\Action;
 use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowContext;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
 
@@ -16,6 +17,8 @@ final class SendEmailAction implements ActionInterface
         private readonly MailerInterface $mailer,
         private readonly Environment $twig,
         private readonly LoggerInterface $logger,
+        private readonly string $senderAddress,
+        private readonly string $senderName,
     ) {
     }
 
@@ -39,6 +42,7 @@ final class SendEmailAction implements ActionInterface
             $body = $this->twig->render($template, $templateVars);
 
             $email = (new Email())
+                ->from(new Address($this->senderAddress, $this->senderName))
                 ->to($recipientEmail)
                 ->subject($subject)
                 ->html($body);
