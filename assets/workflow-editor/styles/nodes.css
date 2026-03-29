@@ -1,0 +1,521 @@
+/* ── SWP Node Styles ────────────────────────────────────── */
+
+:root {
+    --swp-trigger-bg: #EEEDFE;
+    --swp-trigger-text: #534AB7;
+    --swp-trigger-border: rgba(83, 74, 183, 0.4);
+
+    --swp-condition-bg: #FAEEDA;
+    --swp-condition-text: #854F0B;
+    --swp-condition-border: rgba(133, 79, 11, 0.4);
+
+    --swp-action-bg: #E1F5EE;
+    --swp-action-text: #0F6E56;
+    --swp-action-border: rgba(15, 110, 86, 0.4);
+
+    --swp-delay-bg: #F1EFE8;
+    --swp-delay-text: #5F5E5A;
+    --swp-delay-border: rgba(95, 94, 90, 0.4);
+
+    --swp-selected-border: #378ADD;
+    --swp-node-width: 220px;
+    --swp-node-radius: 10px;
+}
+
+/* ── Base Node ───────────────────────────────────────────── */
+
+.swp-node {
+    width: var(--swp-node-width);
+    border-radius: var(--swp-node-radius);
+    border: 0.5px solid transparent;
+    background: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 12px;
+    cursor: grab;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+}
+
+.swp-node:active {
+    cursor: grabbing;
+}
+
+.swp-node.selected,
+.swp-node:focus-within {
+    border: 2px solid var(--swp-selected-border);
+    box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+}
+
+/* ── Node Header ─────────────────────────────────────────── */
+
+.swp-node__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.swp-node__icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.swp-node__badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.swp-node__title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1a1a1a;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Node Body ───────────────────────────────────────────── */
+
+.swp-node__body {
+    padding: 8px 10px 10px;
+    color: #666;
+    font-size: 11px;
+    line-height: 1.4;
+    min-height: 24px;
+}
+
+/* ── Type-specific colors ────────────────────────────────── */
+
+.swp-node--trigger {
+    border-color: var(--swp-trigger-border);
+    background: var(--swp-trigger-bg);
+}
+.swp-node--trigger .swp-node__icon {
+    background: var(--swp-trigger-text);
+    color: #fff;
+}
+.swp-node--trigger .swp-node__badge {
+    background: rgba(83, 74, 183, 0.12);
+    color: var(--swp-trigger-text);
+}
+
+.swp-node--condition {
+    border-color: var(--swp-condition-border);
+    background: var(--swp-condition-bg);
+}
+.swp-node--condition .swp-node__icon {
+    background: var(--swp-condition-text);
+    color: #fff;
+}
+.swp-node--condition .swp-node__badge {
+    background: rgba(133, 79, 11, 0.12);
+    color: var(--swp-condition-text);
+}
+
+.swp-node--action {
+    border-color: var(--swp-action-border);
+    background: var(--swp-action-bg);
+}
+.swp-node--action .swp-node__icon {
+    background: var(--swp-action-text);
+    color: #fff;
+}
+.swp-node--action .swp-node__badge {
+    background: rgba(15, 110, 86, 0.12);
+    color: var(--swp-action-text);
+}
+
+.swp-node--delay {
+    border-color: var(--swp-delay-border);
+    background: var(--swp-delay-bg);
+}
+.swp-node--delay .swp-node__icon {
+    background: var(--swp-delay-text);
+    color: #fff;
+}
+.swp-node--delay .swp-node__badge {
+    background: rgba(95, 94, 90, 0.12);
+    color: var(--swp-delay-text);
+}
+
+/* ── Handles ─────────────────────────────────────────────── */
+
+.swp-node .react-flow__handle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #b0b0b0;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.swp-node .react-flow__handle:hover {
+    border-color: var(--swp-selected-border);
+    background: var(--swp-selected-border);
+}
+
+.swp-node .react-flow__handle-top {
+    top: -5px;
+}
+
+.swp-node .react-flow__handle-bottom {
+    bottom: -5px;
+}
+
+/* ── Handle Labels ───────────────────────────────────────── */
+
+.swp-handle-label {
+    position: absolute;
+    font-size: 8px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.swp-handle-label--top {
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.swp-handle-label--bottom {
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+
+.swp-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    z-index: 10;
+    position: relative;
+}
+
+.swp-toolbar__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.swp-toolbar__right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.swp-toolbar__name-input {
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background: transparent;
+    color: #1a1a1a;
+    min-width: 200px;
+    transition: border-color 0.15s;
+}
+
+.swp-toolbar__name-input:hover,
+.swp-toolbar__name-input:focus {
+    border-color: #d0d0d0;
+    outline: none;
+    background: #fafafa;
+}
+
+.swp-toolbar__badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    color: #666;
+}
+
+.swp-toolbar__badge--active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.swp-toolbar__badge--paused {
+    background: #fef3c7;
+    color: #854d0e;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+
+.swp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.swp-btn:hover {
+    background: #f5f5f5;
+    border-color: #b0b0b0;
+}
+
+.swp-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.swp-btn--primary {
+    background: #378ADD;
+    border-color: #378ADD;
+    color: #fff;
+}
+
+.swp-btn--primary:hover {
+    background: #2c7acc;
+    border-color: #2c7acc;
+}
+
+.swp-btn--danger {
+    color: #dc2626;
+    border-color: #fca5a5;
+}
+
+.swp-btn--danger:hover {
+    background: #fef2f2;
+}
+
+.swp-btn--toggle {
+    position: relative;
+    padding-left: 32px;
+}
+
+.swp-btn--toggle::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 10px;
+    border-radius: 5px;
+    background: #d0d0d0;
+    transition: background 0.2s;
+}
+
+.swp-btn--toggle.swp-btn--toggle-active::before {
+    background: #22c55e;
+}
+
+/* ── Dropdown ────────────────────────────────────────────── */
+
+.swp-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.swp-dropdown__menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100;
+    min-width: 160px;
+    overflow: hidden;
+}
+
+.swp-dropdown__item {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 12px;
+    color: #333;
+    cursor: pointer;
+}
+
+.swp-dropdown__item:hover {
+    background: #f5f5f5;
+}
+
+/* ── Error Banner ────────────────────────────────────────── */
+
+.swp-error-banner {
+    padding: 10px 16px;
+    background: #fef2f2;
+    border-bottom: 1px solid #fca5a5;
+    color: #991b1b;
+    font-size: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.swp-error-banner__close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #991b1b;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* ── Toast ───────────────────────────────────────────────── */
+
+.swp-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1000;
+    animation: swp-toast-in 0.3s ease;
+}
+
+.swp-toast--success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.swp-toast--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+@keyframes swp-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Config Panel ────────────────────────────────────────── */
+
+.swp-panel {
+    width: 280px;
+    background: #fff;
+    border-left: 1px solid #e5e5e5;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.swp-panel__header {
+    padding: 12px 14px;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.swp-panel__close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #999;
+    cursor: pointer;
+}
+
+.swp-panel__section {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.swp-panel__label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.swp-panel__select,
+.swp-panel__input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #333;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.swp-panel__select:focus,
+.swp-panel__input:focus {
+    border-color: var(--swp-selected-border);
+}
+
+.swp-panel__preview {
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: #f9f9f9;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #666;
+    font-style: italic;
+}
+
+.swp-panel__footer {
+    padding: 12px 14px;
+}
+
+/* ── Canvas Container ────────────────────────────────────── */
+
+.swp-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.swp-editor__main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.swp-editor__canvas {
+    flex: 1;
+    position: relative;
+}
