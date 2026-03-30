@@ -7,42 +7,39 @@ namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 use Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Sylius\Resource\Model\ResourceInterface;
+use Sylius\Resource\Model\TimestampableTrait;
 
-class WorkflowCampaign implements ResourceInterface
+class WorkflowCampaign implements WorkflowCampaignInterface
 {
-    private ?int $id = null;
+    use TimestampableTrait;
 
-    private string $name = '';
+    protected ?int $id = null;
 
-    private ?string $description = null;
+    protected string $name = '';
 
-    private bool $enabled = false;
+    protected ?string $description = null;
 
-    private WorkflowStatus $status = WorkflowStatus::Draft;
+    protected bool $enabled = false;
 
-    private array $graph = ['nodes' => [], 'edges' => []];
+    protected WorkflowStatus $status = WorkflowStatus::Draft;
 
-    private int $runCount = 0;
+    protected array $graph = ['nodes' => [], 'edges' => []];
 
-    private ?\DateTimeImmutable $lastRunAt = null;
+    protected int $runCount = 0;
 
-    private \DateTimeImmutable $createdAt;
+    protected ?\DateTimeImmutable $lastRunAt = null;
 
-    private \DateTimeImmutable $updatedAt;
+    /** @var Collection<int, WorkflowRunInterface> */
+    protected Collection $runs;
 
-    /** @var Collection<int, WorkflowRun> */
-    private Collection $runs;
-
-    /** @var Collection<int, WorkflowTriggerLog> */
-    private Collection $triggerLogs;
+    /** @var Collection<int, WorkflowTriggerLogInterface> */
+    protected Collection $triggerLogs;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
         $this->runs = new ArrayCollection();
         $this->triggerLogs = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -120,28 +117,13 @@ class WorkflowCampaign implements ResourceInterface
         $this->lastRunAt = $lastRunAt;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
-    }
-
-    /** @return Collection<int, WorkflowRun> */
+    /** @return Collection<int, WorkflowRunInterface> */
     public function getRuns(): Collection
     {
         return $this->runs;
     }
 
-    /** @return Collection<int, WorkflowTriggerLog> */
+    /** @return Collection<int, WorkflowTriggerLogInterface> */
     public function getTriggerLogs(): Collection
     {
         return $this->triggerLogs;

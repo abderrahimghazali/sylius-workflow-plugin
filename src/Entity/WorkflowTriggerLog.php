@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
-class WorkflowTriggerLog
+class WorkflowTriggerLog implements WorkflowTriggerLogInterface
 {
-    private ?int $id = null;
+    protected ?int $id = null;
 
-    private WorkflowCampaign $campaign;
+    protected WorkflowCampaignInterface $campaign;
 
-    private string $eventName = '';
+    protected string $eventName = '';
 
-    private int $subjectId = 0;
+    protected int $subjectId = 0;
 
-    private \DateTimeImmutable $triggeredAt;
+    protected \DateTimeImmutable $triggeredAt;
 
-    private string $dedupKey = '';
+    protected string $dedupKey = '';
 
     public function __construct()
     {
@@ -28,12 +28,12 @@ class WorkflowTriggerLog
         return $this->id;
     }
 
-    public function getCampaign(): WorkflowCampaign
+    public function getCampaign(): WorkflowCampaignInterface
     {
         return $this->campaign;
     }
 
-    public function setCampaign(WorkflowCampaign $campaign): void
+    public function setCampaign(WorkflowCampaignInterface $campaign): void
     {
         $this->campaign = $campaign;
     }

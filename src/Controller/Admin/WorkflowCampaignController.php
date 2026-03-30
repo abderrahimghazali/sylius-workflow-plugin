@@ -12,9 +12,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[AsController]
 #[IsGranted('ROLE_ADMINISTRATION_ACCESS')]
 final class WorkflowCampaignController extends AbstractController
 {
@@ -65,7 +67,6 @@ final class WorkflowCampaignController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $campaign->setUpdatedAt(new \DateTimeImmutable());
             $this->entityManager->flush();
 
             $this->addFlash('success', 'workflow.flash.updated');

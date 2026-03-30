@@ -49,7 +49,6 @@ final class WorkflowGraphController
 
         // Update campaign
         $campaign->setGraph($graph);
-        $campaign->setUpdatedAt(new \DateTimeImmutable());
 
         if (isset($payload['name']) && \is_string($payload['name']) && $payload['name'] !== '') {
             $campaign->setName($payload['name']);

@@ -4,34 +4,32 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
-use Sylius\Resource\Model\ResourceInterface;
-
-class WorkflowRun implements ResourceInterface
+class WorkflowRun implements WorkflowRunInterface
 {
     public const STATUS_RUNNING = 'running';
     public const STATUS_COMPLETED = 'completed';
     public const STATUS_FAILED = 'failed';
     public const STATUS_SKIPPED = 'skipped';
 
-    private ?int $id = null;
+    protected ?int $id = null;
 
-    private WorkflowCampaign $campaign;
+    protected WorkflowCampaignInterface $campaign;
 
-    private string $subjectType = '';
+    protected string $subjectType = '';
 
-    private int $subjectId = 0;
+    protected int $subjectId = 0;
 
-    private string $status = self::STATUS_RUNNING;
+    protected string $status = self::STATUS_RUNNING;
 
-    private string $currentNodeId = '';
+    protected string $currentNodeId = '';
 
-    private array $executionLog = [];
+    protected array $executionLog = [];
 
-    private \DateTimeImmutable $startedAt;
+    protected \DateTimeImmutable $startedAt;
 
-    private ?\DateTimeImmutable $completedAt = null;
+    protected ?\DateTimeImmutable $completedAt = null;
 
-    private ?string $errorMessage = null;
+    protected ?string $errorMessage = null;
 
     public function __construct()
     {
@@ -43,12 +41,12 @@ class WorkflowRun implements ResourceInterface
         return $this->id;
     }
 
-    public function getCampaign(): WorkflowCampaign
+    public function getCampaign(): WorkflowCampaignInterface
     {
         return $this->campaign;
     }
 
-    public function setCampaign(WorkflowCampaign $campaign): void
+    public function setCampaign(WorkflowCampaignInterface $campaign): void
     {
         $this->campaign = $campaign;
     }

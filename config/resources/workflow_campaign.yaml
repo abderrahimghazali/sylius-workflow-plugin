@@ -4,4 +4,5 @@ sylius_resource:
             driver: doctrine/orm
             classes:
                 model: Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign
+                interface: Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaignInterface
                 repository: Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowCampaignRepository

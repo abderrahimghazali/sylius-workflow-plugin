@@ -78,15 +78,14 @@ class WorkflowRunRepository extends EntityRepository
      */
     public function getDailyRunCounts(\DateTimeImmutable $since): array
     {
+        $metadata = $this->getEntityManager()->getClassMetadata($this->getClassName());
+        $tableName = $metadata->getTableName();
         $conn = $this->getEntityManager()->getConnection();
 
-        $sql = <<<SQL
-            SELECT DATE(started_at) AS run_date, COUNT(*) AS run_count
-            FROM abderrahim_workflow_run
-            WHERE started_at >= :since
-            GROUP BY run_date
-            ORDER BY run_date ASC
-        SQL;
+        $sql = sprintf(
+            'SELECT DATE(started_at) AS run_date, COUNT(*) AS run_count FROM %s WHERE started_at >= :since GROUP BY run_date ORDER BY run_date ASC',
+            $tableName,
+        );
 
         $rows = $conn->executeQuery($sql, ['since' => $since->format('Y-m-d')])->fetchAllAssociative();
 
