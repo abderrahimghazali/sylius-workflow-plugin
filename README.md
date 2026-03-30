@@ -39,24 +39,19 @@
 
 ## Features
 
-- **Visual node-based canvas** — drag-and-drop workflow builder powered by React Flow v12
-- **4 node types:** Trigger, Condition, Action, Delay — each with color-coded cards and config panels
-- **Directed graph execution engine** — walks the graph node by node with full logging
-- **8 trigger events:** order.completed, order.cancelled, order.shipped, cart.abandoned, customer.registered, customer.birthday, loyalty.tier_upgraded, payment.failed
-- **6 condition rules:** order total, first order, customer tag, customer country, loyalty tier, workflow run count
-- **7 action types:** send email, generate coupon, add/remove customer tag, add loyalty points, send webhook, add order note
-- **Delay nodes** — deferred execution via Symfony Messenger with DelayStamp (minutes, hours, days, weeks)
-- **Deduplication** — SHA-256 hash prevents workflows from double-firing on the same subject per day
-- **8 pre-built templates** — abandoned cart recovery, post-purchase review, win-back, birthday coupon, loyalty tier upgrade, welcome, upsell, payment recovery
-- **Template browser** — one-click install of pre-built workflows directly from the admin panel
-- **Test run** — dry-run mode evaluates conditions without executing actions, highlights execution path on canvas
-- **Admin CRUD** — Sylius Grid workflow list with status badges, enabled toggle, and action buttons
-- **Run log viewer** — per-workflow execution history with node-by-node timeline and status badges
-- **Analytics dashboard** — 30-day stats cards, daily runs chart (Chart.js), per-workflow breakdown table
-- **8 email templates** — clean, responsive HTML emails with shared base layout
-- **Graceful degradation** — loyalty plugin integration via `class_exists()`, failed actions don't stop the workflow
-- **Graph validation** — cycle detection (DFS), trigger count enforcement, edge integrity checks (frontend + backend)
-- **No CSS conflicts** — all styles prefixed with `swp-` to avoid Sylius admin clashes
+- **Visual workflow builder** — design automation flows on a drag-and-drop canvas, no code required
+- **Branching logic** — condition nodes split into "Then" and "Otherwise" paths for different customer journeys
+- **Automated emails** — send personalized emails triggered by order events, registrations, or cart abandonment
+- **Coupon generation** — automatically create unique discount codes and deliver them to customers
+- **Delayed actions** — schedule follow-ups hours or days after an event (e.g. review request 7 days after purchase)
+- **Customer tagging** — segment customers automatically based on their behavior and order history
+- **Webhook integration** — push data to external CRMs, analytics tools, or any API endpoint
+- **8 ready-to-use templates** — install pre-built workflows in one click: abandoned cart recovery, welcome series, birthday coupon, win-back campaigns, and more
+- **Test run mode** — preview the execution path against a real order or customer without sending anything
+- **Execution log** — see exactly what happened in every workflow run, node by node, with timestamps
+- **Multiple workflows per event** — run several workflows on the same trigger (e.g. 3 different flows on order completion)
+- **Deduplication** — prevents the same workflow from firing twice for the same customer on the same day
+- **Works with existing plugins** — integrates with [sylius-loyalty-plugin](https://github.com/abderrahimghazali/sylius-loyalty-plugin) for loyalty points, degrades gracefully if not installed
 
 ## Requirements
 
