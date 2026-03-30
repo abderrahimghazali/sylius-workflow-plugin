@@ -22,6 +22,16 @@ final class WorkflowGraphValidator
             return $errors;
         }
 
+        if (\count($nodes) > 50) {
+            $errors[] = sprintf('Graph exceeds maximum node limit (50). Found %d nodes.', \count($nodes));
+            return $errors;
+        }
+
+        if (\count($edges) > 100) {
+            $errors[] = sprintf('Graph exceeds maximum edge limit (100). Found %d edges.', \count($edges));
+            return $errors;
+        }
+
         $nodeIds = array_column($nodes, 'id');
         $nodeMap = [];
         foreach ($nodes as $node) {

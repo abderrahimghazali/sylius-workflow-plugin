@@ -66,9 +66,9 @@ final class GenerateCouponAction implements ActionInterface
 
             return ['success' => true, 'message' => sprintf('Coupon "%s" generated.', $coupon->getCode())];
         } catch (\Throwable $e) {
-            $this->logger->error('Workflow coupon generation failed: ' . $e->getMessage());
+            $this->logger->error('Workflow coupon generation failed.', ['exception' => $e]);
 
-            return ['success' => false, 'message' => 'Coupon generation failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Coupon generation failed. See server logs for details.'];
         }
     }
 

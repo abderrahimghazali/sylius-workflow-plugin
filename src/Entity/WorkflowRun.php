@@ -100,6 +100,10 @@ class WorkflowRun implements ResourceInterface
 
     public function addLogEntry(string $nodeId, string $status, string $message): void
     {
+        if (\count($this->executionLog) >= 500) {
+            return;
+        }
+
         $this->executionLog[] = [
             'nodeId' => $nodeId,
             'status' => $status,

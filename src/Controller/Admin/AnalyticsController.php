@@ -7,9 +7,11 @@ namespace Abderrahim\SyliusWorkflowPlugin\Controller\Admin;
 use Abderrahim\SyliusWorkflowPlugin\Repository\WorkflowRunRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
+#[IsGranted('ROLE_ADMINISTRATION_ACCESS')]
 final class AnalyticsController
 {
     public function __construct(

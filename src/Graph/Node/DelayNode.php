@@ -41,13 +41,16 @@ final class DelayNode
 
     public function getDelayInSeconds(): int
     {
-        return match ($this->unit) {
+        $seconds = match ($this->unit) {
             'minutes' => $this->amount * 60,
             'hours' => $this->amount * 3600,
             'days' => $this->amount * 86400,
             'weeks' => $this->amount * 604800,
             default => $this->amount * 60,
         };
+
+        // Cap at 365 days
+        return min($seconds, 365 * 86400);
     }
 
     public function getType(): NodeType

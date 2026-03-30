@@ -27,11 +27,26 @@ final class SendEmailAction implements ActionInterface
         return $actionType === 'send_email';
     }
 
+    private const ALLOWED_TEMPLATES = [
+        '@SyliusWorkflowPlugin/email/abandoned_cart.html.twig',
+        '@SyliusWorkflowPlugin/email/review_request.html.twig',
+        '@SyliusWorkflowPlugin/email/win_back.html.twig',
+        '@SyliusWorkflowPlugin/email/birthday_coupon.html.twig',
+        '@SyliusWorkflowPlugin/email/tier_upgrade.html.twig',
+        '@SyliusWorkflowPlugin/email/welcome.html.twig',
+        '@SyliusWorkflowPlugin/email/upsell_suggestion.html.twig',
+        '@SyliusWorkflowPlugin/email/payment_failed_recovery.html.twig',
+    ];
+
     public function execute(array $config, WorkflowContext $context): array
     {
         $template = $config['template'] ?? '';
         $subject = $config['subject'] ?? 'Notification';
         $recipientEmail = $config['recipient'] ?? $this->resolveRecipientEmail($context);
+
+        if (!\in_array($template, self::ALLOWED_TEMPLATES, true)) {
+            return ['success' => false, 'message' => 'Email template not allowed.'];
+        }
 
         if ($recipientEmail === null) {
             return ['success' => false, 'message' => 'No recipient email found.'];
@@ -51,12 +66,12 @@ final class SendEmailAction implements ActionInterface
 
             return ['success' => true, 'message' => sprintf('Email sent to %s.', $recipientEmail)];
         } catch (\Throwable $e) {
-            $this->logger->error('Workflow email action failed: ' . $e->getMessage(), [
+            $this->logger->error('Workflow email action failed.', [
                 'template' => $template,
-                'recipient' => $recipientEmail,
+                'exception' => $e,
             ]);
 
-            return ['success' => false, 'message' => 'Email sending failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Email sending failed. See server logs for details.'];
         }
     }
 

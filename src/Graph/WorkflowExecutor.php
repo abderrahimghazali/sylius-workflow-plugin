@@ -73,9 +73,17 @@ final class WorkflowExecutor
         }
         $context->set('workflow_name', $campaign->getName());
 
-        // Walk the graph
+        // Walk the graph (max 200 steps to prevent runaway execution)
         $currentNodeId = $startNodeId;
+        $stepCount = 0;
+        $maxSteps = 200;
         while ($currentNodeId !== null) {
+            if (++$stepCount > $maxSteps) {
+                $run->markFailed('Execution exceeded maximum step limit (' . $maxSteps . ').');
+                $this->entityManager->flush();
+                return $run;
+            }
+
             $run->setCurrentNodeId($currentNodeId);
 
             if (!isset($nodeMap[$currentNodeId])) {

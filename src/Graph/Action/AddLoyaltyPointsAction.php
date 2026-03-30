@@ -47,9 +47,9 @@ final class AddLoyaltyPointsAction implements ActionInterface
 
             return ['success' => true, 'message' => sprintf('%d loyalty points added.', $amount)];
         } catch (\Throwable $e) {
-            $this->logger->error('Workflow loyalty points action failed: ' . $e->getMessage());
+            $this->logger->error('Workflow loyalty points action failed.', ['exception' => $e]);
 
-            return ['success' => false, 'message' => 'Loyalty points action failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Loyalty points action failed. See server logs for details.'];
         }
     }
 }

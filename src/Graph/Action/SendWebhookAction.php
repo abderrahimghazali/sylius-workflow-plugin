@@ -28,31 +28,64 @@ final class SendWebhookAction implements ActionInterface
             return ['success' => false, 'message' => 'No webhook URL specified.'];
         }
 
-        $headers = $config['headers'] ?? [];
-        $payload = $this->buildPayload($context, $config);
+        if (!$this->isUrlSafe($url)) {
+            return ['success' => false, 'message' => 'Webhook URL is not allowed (must be public HTTPS).'];
+        }
+
+        $payload = $this->buildPayload($context);
 
         try {
             $response = $this->httpClient->request('POST', $url, [
                 'json' => $payload,
-                'headers' => $headers,
                 'timeout' => 10,
             ]);
 
             $statusCode = $response->getStatusCode();
 
             if ($statusCode >= 200 && $statusCode < 300) {
-                return ['success' => true, 'message' => sprintf('Webhook sent to %s (HTTP %d).', $url, $statusCode)];
+                return ['success' => true, 'message' => sprintf('Webhook sent (HTTP %d).', $statusCode)];
             }
 
             return ['success' => false, 'message' => sprintf('Webhook returned HTTP %d.', $statusCode)];
         } catch (\Throwable $e) {
-            $this->logger->error('Workflow webhook action failed: ' . $e->getMessage(), ['url' => $url]);
+            $this->logger->error('Workflow webhook action failed.', ['url' => $url, 'exception' => $e]);
 
-            return ['success' => false, 'message' => 'Webhook failed: ' . $e->getMessage()];
+            return ['success' => false, 'message' => 'Webhook request failed. See server logs for details.'];
         }
     }
 
-    private function buildPayload(WorkflowContext $context, array $config): array
+    private function isUrlSafe(string $url): bool
+    {
+        $parsed = parse_url($url);
+        if ($parsed === false || !isset($parsed['scheme'], $parsed['host'])) {
+            return false;
+        }
+
+        if (!\in_array($parsed['scheme'], ['https', 'http'], true)) {
+            return false;
+        }
+
+        $host = $parsed['host'];
+
+        // Block loopback, link-local, and metadata endpoints
+        if (\in_array($host, ['localhost', '127.0.0.1', '0.0.0.0', '[::1]', '169.254.169.254'], true)) {
+            return false;
+        }
+
+        // Resolve hostname and check for private IP ranges
+        $ip = gethostbyname($host);
+        if ($ip === $host) {
+            return false; // DNS resolution failed
+        }
+
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function buildPayload(WorkflowContext $context): array
     {
         $payload = [
             'event' => $context->getEvent(),
@@ -63,10 +96,6 @@ final class SendWebhookAction implements ActionInterface
         $subject = $context->getSubject();
         if (method_exists($subject, 'getId')) {
             $payload['subject_id'] = $subject->getId();
-        }
-
-        if (isset($config['extra_payload']) && \is_array($config['extra_payload'])) {
-            $payload = array_merge($payload, $config['extra_payload']);
         }
 
         return $payload;

@@ -50,7 +50,7 @@
                                     <p class="text-secondary" style="font-size: 0.85rem; min-height: 40px;">
                                         {{ template.description }}
                                     </p>
-                                    <form method="post" action="{{ path('workflow_admin_template_install', {templateClass: template.class|split('\\')|last}) }}">
+                                    <form method="post" action="{{ path('workflow_admin_template_install', {templateClass: template.class}) }}">
                                         <button type="submit" class="btn btn-primary w-100">
                                             {{ 'workflow.ui.install_template'|trans }}
                                         </button>

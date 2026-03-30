@@ -12,9 +12,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
 #[AsController]
+#[IsGranted('ROLE_ADMINISTRATION_ACCESS')]
 final class TemplateController
 {
     /** @var iterable<WorkflowTemplateInterface> */
@@ -47,7 +49,7 @@ final class TemplateController
     {
         $template = null;
         foreach ($this->templates as $t) {
-            if ($t::class === $templateClass || basename(str_replace('\\', '/', $t::class)) === $templateClass) {
+            if ($t::class === $templateClass) {
                 $template = $t;
                 break;
             }

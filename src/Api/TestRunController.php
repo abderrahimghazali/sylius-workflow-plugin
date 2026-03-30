@@ -39,13 +39,14 @@ final class TestRunController
         $subjectType = $payload['subjectType'] ?? '';
         $subjectId = (int) ($payload['subjectId'] ?? 0);
 
-        if ($subjectType === '' || $subjectId === 0) {
-            return new JsonResponse(['error' => 'subjectType and subjectId are required.'], Response::HTTP_BAD_REQUEST);
+        $allowedTypes = ['order', 'customer'];
+        if (!\in_array($subjectType, $allowedTypes, true) || $subjectId === 0) {
+            return new JsonResponse(['error' => 'Invalid subjectType or subjectId.'], Response::HTTP_BAD_REQUEST);
         }
 
         $subject = $this->resolveSubject($subjectType, $subjectId);
         if ($subject === null) {
-            return new JsonResponse(['error' => sprintf('%s #%d not found.', $subjectType, $subjectId)], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['error' => 'Subject not found.'], Response::HTTP_NOT_FOUND);
         }
 
         // Determine the trigger event from graph
