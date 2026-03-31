@@ -546,7 +546,8 @@
 .swp-editor {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    min-height: 0;
     overflow: hidden;
     font-family: var(--swp-font);
     background: #FAFAFA;
@@ -555,11 +556,13 @@
 .swp-editor__main {
     display: flex;
     flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
 .swp-editor__canvas {
     flex: 1;
+    min-height: 0;
     position: relative;
 }
 
