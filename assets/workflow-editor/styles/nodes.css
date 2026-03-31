@@ -581,6 +581,9 @@
 }
 
 .swp-editor .react-flow__controls {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
     border-radius: var(--swp-radius-sm);
     box-shadow: var(--swp-shadow);
     border: 1px solid var(--swp-border);
