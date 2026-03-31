@@ -183,6 +183,9 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
 
     const onKeyDown = useCallback(
         (event) => {
+            const tag = event.target.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
             if ((event.key === 'Delete' || event.key === 'Backspace') && selectedNodeId) {
                 const node = nodes.find((n) => n.id === selectedNodeId);
                 if (node && node.data.nodeType !== 'trigger') {
