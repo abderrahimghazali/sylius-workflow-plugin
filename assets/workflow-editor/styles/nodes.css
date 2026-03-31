@@ -580,14 +580,17 @@
     box-shadow: var(--swp-shadow);
 }
 
+.swp-editor .react-flow__panel.bottom.left {
+    bottom: 12px;
+    left: 12px;
+}
+
 .swp-editor .react-flow__controls {
-    position: fixed;
-    bottom: 16px;
-    left: 16px;
     border-radius: var(--swp-radius-sm);
-    box-shadow: var(--swp-shadow);
+    box-shadow: var(--swp-shadow-md);
     border: 1px solid var(--swp-border);
     overflow: hidden;
+    background: var(--swp-surface);
 }
 
 .swp-editor .react-flow__controls-button {
