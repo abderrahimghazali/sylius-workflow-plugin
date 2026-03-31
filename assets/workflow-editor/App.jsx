@@ -671,10 +671,9 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 >
                     <div
                         className="swp-context-menu"
-                        style={{ left: contextMenu.screenX, top: contextMenu.screenY }}
+                        style={{ left: contextMenu.screenX + 'px', top: contextMenu.screenY + 'px' }}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="swp-context-menu__header">Add node here</div>
                         <button className="swp-context-menu__item" onClick={() => addNodeAtPosition('trigger', contextMenu.flowX, contextMenu.flowY)}>
                             <span className="swp-context-menu__icon" style={{ background: 'var(--swp-trigger)' }}>
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
