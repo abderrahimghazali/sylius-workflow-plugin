@@ -90,8 +90,8 @@ final class SendWebhookAction implements ActionInterface
         $text = $this->resolveMessage($context, $message);
 
         return match ($format) {
-            'discord' => ['content' => $text],
-            'slack' => ['text' => $text],
+            'discord' => $this->buildDiscordEmbed($context, $text),
+            'slack' => $this->buildSlackPayload($context, $text),
             default => [
                 'event' => $context->getEvent(),
                 'channel' => $context->getChannel(),
@@ -100,6 +100,92 @@ final class SendWebhookAction implements ActionInterface
                 'subject_id' => method_exists($context->getSubject(), 'getId') ? $context->getSubject()->getId() : null,
             ],
         };
+    }
+
+    private function buildDiscordEmbed(WorkflowContext $context, string $description): array
+    {
+        $subject = $context->getSubject();
+        $fields = [];
+
+        if (method_exists($subject, 'getNumber')) {
+            $fields[] = ['name' => '🛒 Order', 'value' => '#' . $subject->getNumber(), 'inline' => true];
+        }
+
+        $customer = null;
+        if (method_exists($subject, 'getCustomer') && $subject->getCustomer() !== null) {
+            $customer = $subject->getCustomer();
+        } elseif (method_exists($subject, 'getEmail')) {
+            $customer = $subject;
+        }
+
+        if ($customer !== null && method_exists($customer, 'getEmail')) {
+            $fields[] = ['name' => '👤 Customer', 'value' => $customer->getEmail(), 'inline' => true];
+        }
+
+        $fields[] = ['name' => '📡 Channel', 'value' => $context->getChannel(), 'inline' => true];
+
+        if (method_exists($subject, 'getTotal')) {
+            $total = $subject->getTotal();
+            $currency = method_exists($subject, 'getCurrencyCode') ? $subject->getCurrencyCode() : 'USD';
+            $fields[] = ['name' => '💰 Total', 'value' => number_format($total / 100, 2) . ' ' . $currency, 'inline' => true];
+        }
+
+        return [
+            'embeds' => [
+                [
+                    'title' => '⚡ ' . ucfirst(str_replace('.', ' ', $context->getEvent())),
+                    'description' => $description,
+                    'color' => 3447003, // Discord blue (#3498DB)
+                    'fields' => $fields,
+                    'footer' => ['text' => $context->get('workflow_name', 'Workflow')],
+                    'timestamp' => (new \DateTimeImmutable())->format('c'),
+                ],
+            ],
+        ];
+    }
+
+    private function buildSlackPayload(WorkflowContext $context, string $text): array
+    {
+        $subject = $context->getSubject();
+        $fields = [];
+
+        if (method_exists($subject, 'getNumber')) {
+            $fields[] = ['type' => 'mrkdwn', 'text' => '*Order:* #' . $subject->getNumber()];
+        }
+
+        $customer = null;
+        if (method_exists($subject, 'getCustomer') && $subject->getCustomer() !== null) {
+            $customer = $subject->getCustomer();
+        } elseif (method_exists($subject, 'getEmail')) {
+            $customer = $subject;
+        }
+
+        if ($customer !== null && method_exists($customer, 'getEmail')) {
+            $fields[] = ['type' => 'mrkdwn', 'text' => '*Customer:* ' . $customer->getEmail()];
+        }
+
+        return [
+            'blocks' => [
+                [
+                    'type' => 'header',
+                    'text' => ['type' => 'plain_text', 'text' => '⚡ ' . ucfirst(str_replace('.', ' ', $context->getEvent()))],
+                ],
+                [
+                    'type' => 'section',
+                    'text' => ['type' => 'mrkdwn', 'text' => $text],
+                ],
+                [
+                    'type' => 'section',
+                    'fields' => $fields,
+                ],
+                [
+                    'type' => 'context',
+                    'elements' => [
+                        ['type' => 'mrkdwn', 'text' => $context->get('workflow_name', 'Workflow') . ' • ' . $context->getChannel()],
+                    ],
+                ],
+            ],
+        ];
     }
 
     private function resolveMessage(WorkflowContext $context, string $template): string
