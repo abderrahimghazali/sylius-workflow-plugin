@@ -176,12 +176,13 @@ export default function ActionConfig({ config, onChange }) {
                     </div>
                     <div className="swp-panel__section">
                         <label className="swp-panel__label">Message</label>
-                        <input
+                        <textarea
                             className="swp-panel__input"
-                            type="text"
+                            rows={3}
                             value={config.message || ''}
                             onChange={(e) => update('message', e.target.value)}
-                            placeholder='Order #{order_number} completed by {customer_email}'
+                            placeholder={'🛒 New order {order_number}!\nCustomer: {customer_name} ({customer_email})\nEvent: {event} on {channel}'}
+                            style={{ resize: 'vertical' }}
                         />
                         <div className="swp-panel__preview" style={{ marginTop: '6px' }}>
                             Variables: {'{event}'}, {'{subject_id}'}, {'{order_number}'}, {'{customer_email}'}, {'{customer_name}'}, {'{workflow}'}, {'{channel}'}
