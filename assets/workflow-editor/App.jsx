@@ -282,46 +282,58 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 if (incoming[e.target] !== undefined) incoming[e.target]++;
             });
 
-            // Tree layout via DFS from root
+            // Two-pass tree layout: 1) measure subtree widths, 2) assign positions
             const roots = Object.keys(incoming).filter((id) => incoming[id] === 0);
             const posMap = {};
-            const COL_W = 300;
-            const ROW_H = 160;
+            const NODE_W = 280;
+            const GAP_X = 40;
+            const ROW_H = 180;
             const visited = new Set();
+            const widthCache = {};
 
-            function layout(nodeId, row, col) {
-                if (visited.has(nodeId)) return col;
-                visited.add(nodeId);
-                posMap[nodeId] = { x: col * COL_W, y: row * ROW_H + 40 };
+            // Pass 1: calculate the width each subtree needs
+            function subtreeWidth(nodeId) {
+                if (widthCache[nodeId] !== undefined) return widthCache[nodeId];
+                if (visited.has(nodeId)) { widthCache[nodeId] = NODE_W; return NODE_W; }
 
-                const children = adj[nodeId] || [];
-                const node = nodeMap[nodeId];
-                const isCondition = node && node.data.nodeType === 'condition';
-
-                if (children.length >= 2) {
-                    // Multiple children — spread them side by side
-                    let startCol = col - Math.floor((children.length - 1) / 2);
-                    let nextCol = startCol;
-                    for (const child of children) {
-                        if (!visited.has(child.target)) {
-                            nextCol = layout(child.target, row + 1, nextCol);
-                            nextCol++;
-                        }
-                    }
-                    return nextCol - 1;
-                } else if (children.length === 1) {
-                    if (!visited.has(children[0].target)) {
-                        return layout(children[0].target, row + 1, col);
-                    }
-                    return col;
-                } else {
-                    return col;
+                const children = (adj[nodeId] || []).filter((c) => !visited.has(c.target));
+                if (children.length === 0) {
+                    widthCache[nodeId] = NODE_W;
+                    return NODE_W;
                 }
+
+                const childWidths = children.map((c) => subtreeWidth(c.target));
+                const totalChildWidth = childWidths.reduce((a, b) => a + b, 0) + (children.length - 1) * GAP_X;
+                widthCache[nodeId] = Math.max(NODE_W, totalChildWidth);
+                return widthCache[nodeId];
             }
 
-            let startCol = 1;
+            // Pass 2: assign x,y positions centered over children
+            function assignPositions(nodeId, row, centerX) {
+                if (visited.has(nodeId)) return;
+                visited.add(nodeId);
+                posMap[nodeId] = { x: centerX - NODE_W / 2, y: row * ROW_H + 40 };
+
+                const children = (adj[nodeId] || []).filter((c) => !visited.has(c.target));
+                if (children.length === 0) return;
+
+                const childWidths = children.map((c) => subtreeWidth(c.target));
+                const totalWidth = childWidths.reduce((a, b) => a + b, 0) + (children.length - 1) * GAP_X;
+                let startX = centerX - totalWidth / 2;
+
+                children.forEach((child, i) => {
+                    const childCenter = startX + childWidths[i] / 2;
+                    assignPositions(child.target, row + 1, childCenter);
+                    startX += childWidths[i] + GAP_X;
+                });
+            }
+
+            let offsetX = NODE_W;
             for (const root of roots) {
-                startCol = layout(root, 0, startCol);
+                subtreeWidth(root);
+                const w = widthCache[root] || NODE_W;
+                assignPositions(root, 0, offsetX + w / 2);
+                offsetX += w + GAP_X;
             }
 
             // Place any unvisited nodes at the end
