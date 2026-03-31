@@ -16,6 +16,7 @@ const RULE_LABELS = {
     'customer_country': 'Customer country',
     'loyalty_tier': 'Loyalty tier',
     'order_product': 'Order contains product',
+    'product_stock': 'Product stock level',
     'order_has_coupon': 'Order has coupon',
     'workflow_run_count': 'Workflow run count',
 };
@@ -27,6 +28,11 @@ const OPERATOR_LABELS = {
     'lt': '<',
     'gte': '≥',
     'lte': '≤',
+    'contains': 'contains',
+    'not_contains': 'does not contain',
+    'out_of_stock': 'is out of stock',
+    'low_stock': 'is low stock (≤ threshold)',
+    'in_stock': 'is in stock (> threshold)',
     'contains': 'contains',
 };
 
