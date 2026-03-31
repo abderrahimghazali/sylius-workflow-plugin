@@ -6,6 +6,7 @@ namespace Abderrahim\SyliusWorkflowPlugin\Graph\Rule;
 
 use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowContext;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\ProductInterface as CoreProductInterface;
 
 final class OrderContainsTaxonRule implements RuleInterface
 {
@@ -32,7 +33,7 @@ final class OrderContainsTaxonRule implements RuleInterface
             }
 
             $product = $variant->getProduct();
-            if ($product === null) {
+            if (!$product instanceof CoreProductInterface) {
                 continue;
             }
 
