@@ -56,6 +56,19 @@ export default function ActionConfig({ config, onChange }) {
                             placeholder="Email subject line..."
                         />
                     </div>
+                    <div className="swp-panel__section">
+                        <label className="swp-panel__label">Recipient (optional)</label>
+                        <input
+                            className="swp-panel__input"
+                            type="email"
+                            value={config.recipient || ''}
+                            onChange={(e) => update('recipient', e.target.value)}
+                            placeholder="Leave empty to send to customer"
+                        />
+                        <div className="swp-panel__preview" style={{ marginTop: '6px' }}>
+                            {config.recipient ? `Sends to: ${config.recipient}` : 'Sends to the customer email'}
+                        </div>
+                    </div>
                 </>
             )}
 
