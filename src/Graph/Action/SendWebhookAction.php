@@ -219,7 +219,9 @@ final class SendWebhookAction implements ActionInterface
             $email = method_exists($customer, 'getEmail') ? ($customer->getEmail() ?? '') : '';
             $name = method_exists($customer, 'getFullName') ? trim($customer->getFullName()) : '';
             if ($name === '') {
-                $name = method_exists($customer, 'getFirstName') ? trim(($customer->getFirstName() ?? '') . ' ' . ($customer->getLastName() ?? '')) : '';
+                $firstName = method_exists($customer, 'getFirstName') ? ($customer->getFirstName() ?? '') : '';
+                $lastName = method_exists($customer, 'getLastName') ? ($customer->getLastName() ?? '') : '';
+                $name = trim($firstName . ' ' . $lastName);
             }
             if ($name === '') {
                 $name = $email;
