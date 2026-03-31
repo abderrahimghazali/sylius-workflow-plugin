@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import {
     ReactFlow,
-    MiniMap,
+    Controls,
     Background,
     useNodesState,
     useEdgesState,
@@ -642,11 +642,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         }}
                     >
                         <Background variant="dots" gap={16} size={1} color="#d0d0d0" />
-                        <MiniMap
-                            position="bottom-right"
-                            style={{ border: '1px solid #e5e5e5', borderRadius: '6px' }}
-                            maskColor="rgba(0,0,0,0.05)"
-                        />
+                        <Controls position="bottom-left" showInteractive={false} />
                     </ReactFlow>
                 </div>
 
