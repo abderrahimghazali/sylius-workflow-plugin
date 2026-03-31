@@ -32,7 +32,9 @@ final class SendWebhookAction implements ActionInterface
             return ['success' => false, 'message' => 'Webhook URL is not allowed (must be public HTTPS).'];
         }
 
-        $payload = $this->buildPayload($context);
+        $format = $config['format'] ?? 'json';
+        $message = $config['message'] ?? '';
+        $payload = $this->buildPayload($context, $format, $message);
 
         try {
             $response = $this->httpClient->request('POST', $url, [
@@ -67,15 +69,13 @@ final class SendWebhookAction implements ActionInterface
 
         $host = $parsed['host'];
 
-        // Block loopback, link-local, and metadata endpoints
         if (\in_array($host, ['localhost', '127.0.0.1', '0.0.0.0', '[::1]', '169.254.169.254'], true)) {
             return false;
         }
 
-        // Resolve hostname and check for private IP ranges
         $ip = gethostbyname($host);
         if ($ip === $host) {
-            return false; // DNS resolution failed
+            return false;
         }
 
         if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
@@ -85,19 +85,51 @@ final class SendWebhookAction implements ActionInterface
         return true;
     }
 
-    private function buildPayload(WorkflowContext $context): array
+    private function buildPayload(WorkflowContext $context, string $format, string $message): array
     {
-        $payload = [
-            'event' => $context->getEvent(),
-            'channel' => $context->getChannel(),
-            'timestamp' => (new \DateTimeImmutable())->format('c'),
-        ];
+        $text = $this->resolveMessage($context, $message);
 
-        $subject = $context->getSubject();
-        if (method_exists($subject, 'getId')) {
-            $payload['subject_id'] = $subject->getId();
+        return match ($format) {
+            'discord' => ['content' => $text],
+            'slack' => ['text' => $text],
+            default => [
+                'event' => $context->getEvent(),
+                'channel' => $context->getChannel(),
+                'message' => $text,
+                'timestamp' => (new \DateTimeImmutable())->format('c'),
+                'subject_id' => method_exists($context->getSubject(), 'getId') ? $context->getSubject()->getId() : null,
+            ],
+        };
+    }
+
+    private function resolveMessage(WorkflowContext $context, string $template): string
+    {
+        if ($template === '') {
+            $template = 'Workflow "{workflow}" triggered by {event} for subject #{subject_id}';
         }
 
-        return $payload;
+        $subject = $context->getSubject();
+        $subjectId = method_exists($subject, 'getId') ? (string) $subject->getId() : '?';
+
+        $replacements = [
+            '{event}' => $context->getEvent(),
+            '{channel}' => $context->getChannel(),
+            '{subject_id}' => $subjectId,
+            '{workflow}' => $context->get('workflow_name', 'Workflow'),
+        ];
+
+        if (method_exists($subject, 'getNumber')) {
+            $replacements['{order_number}'] = (string) $subject->getNumber();
+        }
+
+        if (method_exists($subject, 'getCustomer') && $subject->getCustomer() !== null) {
+            $customer = $subject->getCustomer();
+            $replacements['{customer_email}'] = method_exists($customer, 'getEmail') ? $customer->getEmail() : '';
+            $replacements['{customer_name}'] = method_exists($customer, 'getFullName') ? $customer->getFullName() : '';
+        } elseif (method_exists($subject, 'getEmail')) {
+            $replacements['{customer_email}'] = $subject->getEmail();
+        }
+
+        return str_replace(array_keys($replacements), array_values($replacements), $template);
     }
 }

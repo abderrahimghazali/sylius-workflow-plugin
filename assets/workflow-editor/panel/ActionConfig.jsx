@@ -149,25 +149,43 @@ export default function ActionConfig({ config, onChange }) {
             {actionType === 'send_webhook' && (
                 <>
                     <div className="swp-panel__section">
+                        <label className="swp-panel__label">Format</label>
+                        <select
+                            className="swp-panel__select"
+                            value={config.format || 'json'}
+                            onChange={(e) => update('format', e.target.value)}
+                        >
+                            <option value="json">JSON (generic)</option>
+                            <option value="discord">Discord</option>
+                            <option value="slack">Slack</option>
+                        </select>
+                    </div>
+                    <div className="swp-panel__section">
                         <label className="swp-panel__label">Webhook URL</label>
                         <input
                             className="swp-panel__input"
                             type="text"
                             value={config.url || ''}
                             onChange={(e) => update('url', e.target.value)}
-                            placeholder="https://example.com/webhook"
+                            placeholder={
+                                config.format === 'discord' ? 'https://discord.com/api/webhooks/...' :
+                                config.format === 'slack' ? 'https://hooks.slack.com/services/...' :
+                                'https://example.com/webhook'
+                            }
                         />
                     </div>
                     <div className="swp-panel__section">
-                        <label className="swp-panel__label">Method</label>
-                        <select
-                            className="swp-panel__select"
-                            value={config.method || 'POST'}
-                            onChange={(e) => update('method', e.target.value)}
-                        >
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                        </select>
+                        <label className="swp-panel__label">Message</label>
+                        <input
+                            className="swp-panel__input"
+                            type="text"
+                            value={config.message || ''}
+                            onChange={(e) => update('message', e.target.value)}
+                            placeholder='Order #{order_number} completed by {customer_email}'
+                        />
+                        <div className="swp-panel__preview" style={{ marginTop: '6px' }}>
+                            Variables: {'{event}'}, {'{subject_id}'}, {'{order_number}'}, {'{customer_email}'}, {'{customer_name}'}, {'{workflow}'}, {'{channel}'}
+                        </div>
                     </div>
                 </>
             )}
