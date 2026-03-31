@@ -298,28 +298,24 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 const node = nodeMap[nodeId];
                 const isCondition = node && node.data.nodeType === 'condition';
 
-                if (isCondition && children.length >= 2) {
-                    // Find true/false branches
-                    const trueBranch = children.find((c) => c.handle === 'exit-true');
-                    const falseBranch = children.find((c) => c.handle === 'exit-false');
-
-                    let nextCol = col;
-                    if (trueBranch && !visited.has(trueBranch.target)) {
-                        nextCol = layout(trueBranch.target, row + 1, col - 1);
-                    }
-                    if (falseBranch && !visited.has(falseBranch.target)) {
-                        nextCol = layout(falseBranch.target, row + 1, Math.max(nextCol + 1, col + 1));
-                    }
-                    return nextCol;
-                } else {
-                    // Linear: lay out children sequentially
-                    let nextCol = col;
+                if (children.length >= 2) {
+                    // Multiple children — spread them side by side
+                    let startCol = col - Math.floor((children.length - 1) / 2);
+                    let nextCol = startCol;
                     for (const child of children) {
                         if (!visited.has(child.target)) {
-                            nextCol = layout(child.target, row + 1, col);
+                            nextCol = layout(child.target, row + 1, nextCol);
+                            nextCol++;
                         }
                     }
-                    return nextCol;
+                    return nextCol - 1;
+                } else if (children.length === 1) {
+                    if (!visited.has(children[0].target)) {
+                        return layout(children[0].target, row + 1, col);
+                    }
+                    return col;
+                } else {
+                    return col;
                 }
             }
 
