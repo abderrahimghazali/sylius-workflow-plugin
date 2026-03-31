@@ -119,15 +119,30 @@ final class SendWebhookAction implements ActionInterface
         ];
 
         if (method_exists($subject, 'getNumber')) {
-            $replacements['{order_number}'] = (string) $subject->getNumber();
+            $replacements['{order_number}'] = '#' . $subject->getNumber();
         }
 
+        $customer = null;
         if (method_exists($subject, 'getCustomer') && $subject->getCustomer() !== null) {
             $customer = $subject->getCustomer();
-            $replacements['{customer_email}'] = method_exists($customer, 'getEmail') ? $customer->getEmail() : '';
-            $replacements['{customer_name}'] = method_exists($customer, 'getFullName') ? $customer->getFullName() : '';
         } elseif (method_exists($subject, 'getEmail')) {
-            $replacements['{customer_email}'] = $subject->getEmail();
+            $customer = $subject;
+        }
+
+        if ($customer !== null) {
+            $email = method_exists($customer, 'getEmail') ? ($customer->getEmail() ?? '') : '';
+            $name = method_exists($customer, 'getFullName') ? trim($customer->getFullName()) : '';
+            if ($name === '') {
+                $name = method_exists($customer, 'getFirstName') ? trim(($customer->getFirstName() ?? '') . ' ' . ($customer->getLastName() ?? '')) : '';
+            }
+            if ($name === '') {
+                $name = $email;
+            }
+            $replacements['{customer_email}'] = $email;
+            $replacements['{customer_name}'] = $name;
+        } else {
+            $replacements['{customer_email}'] = '';
+            $replacements['{customer_name}'] = '';
         }
 
         return str_replace(array_keys($replacements), array_values($replacements), $template);
