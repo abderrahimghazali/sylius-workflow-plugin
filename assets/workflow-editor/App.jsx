@@ -8,7 +8,9 @@ import {
     addEdge,
     BaseEdge,
     EdgeLabelRenderer,
-    getSmoothStepPath,
+    getBezierPath,
+    MarkerType,
+    useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -29,7 +31,7 @@ const nodeTypes = {
 };
 
 function InsertButtonEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, data }) {
-    const [path, labelX, labelY] = getSmoothStepPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
+    const [path, labelX, labelY] = getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
     const showMenu = data?.insertEdgeId === id;
     const isHovered = data?.hoveredEdgeId === id;
 
@@ -108,7 +110,11 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
     const [insertEdgeId, setInsertEdgeId] = useState(null);
     const [hoveredEdgeId, setHoveredEdgeId] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [contextMenu, setContextMenu] = useState(null); // { x, y, flowX, flowY }
     const toastTimer = useRef(null);
+    const reactFlowRef = useRef(null);
+
+    const { screenToFlowPosition } = useReactFlow();
 
     const selectedNode = useMemo(
         () => nodes.find((n) => n.id === selectedNodeId) || null,
@@ -125,6 +131,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 type: 'insertButton',
                 animated: false,
                 style: { stroke: '#94A3B8', strokeWidth: 1.5 },
+                markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: '#94A3B8' },
             };
             setEdges((eds) => addEdge(edge, eds));
         },
@@ -140,7 +147,39 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
     const onPaneClick = useCallback(() => {
         setSelectedNodeId(null);
         setInsertEdgeId(null);
+        setContextMenu(null);
     }, []);
+
+    // ── Right-click context menu on canvas ──────────────────
+
+    const onPaneContextMenu = useCallback((event) => {
+        event.preventDefault();
+        const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+        setContextMenu({
+            screenX: event.clientX,
+            screenY: event.clientY,
+            flowX: flowPosition.x,
+            flowY: flowPosition.y,
+        });
+    }, [screenToFlowPosition]);
+
+    const addNodeAtPosition = useCallback((nodeType, x, y) => {
+        if (nodeType === 'trigger' && nodes.some((n) => n.data.nodeType === 'trigger')) {
+            showToast('error', 'A workflow can only have one trigger node.');
+            setContextMenu(null);
+            return;
+        }
+
+        const id = generateNodeId();
+        setNodes((nds) => [...nds, {
+            id,
+            type: NODE_TYPE_TO_COMPONENT[nodeType],
+            position: { x: x - 120, y },
+            data: { nodeType, config: {}, label: '' },
+        }]);
+        setSelectedNodeId(id);
+        setContextMenu(null);
+    }, [nodes, setNodes, showToast]);
 
     // ── Insert node on edge ─────────────────────────────────
 
@@ -168,8 +207,8 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 const filtered = eds.filter((e) => e.id !== edgeId);
                 return [
                     ...filtered,
-                    { id: generateEdgeId(edge.source, id), source: edge.source, target: id, type: 'insertButton', animated: false, style: { stroke: '#94A3B8', strokeWidth: 1.5 } },
-                    { id: generateEdgeId(id, edge.target), source: id, target: edge.target, type: 'insertButton', animated: false, style: { stroke: '#94A3B8', strokeWidth: 1.5 } },
+                    { id: generateEdgeId(edge.source, id), source: edge.source, target: id, type: 'insertButton', animated: false, style: { stroke: '#94A3B8', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: '#94A3B8' } },
+                    { id: generateEdgeId(id, edge.target), source: id, target: edge.target, type: 'insertButton', animated: false, style: { stroke: '#94A3B8', strokeWidth: 1.5 }, markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: '#94A3B8' } },
                 ];
             });
 
@@ -591,13 +630,15 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         onConnect={onConnect}
                         onNodeClick={onNodeClick}
                         onPaneClick={onPaneClick}
+                        onPaneContextMenu={onPaneContextMenu}
                         onEdgeMouseEnter={useCallback((_e, edge) => setHoveredEdgeId(edge.id), [])}
                         onEdgeMouseLeave={useCallback(() => setHoveredEdgeId(null), [])}
                         fitView
                         fitViewOptions={{ padding: 0.5, maxZoom: 1 }}
                         defaultEdgeOptions={{
-                            type: 'smoothstep',
+                            type: 'insertButton',
                             style: { stroke: '#94A3B8', strokeWidth: 1.5 },
+                            markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: '#94A3B8' },
                         }}
                     >
                         <Background variant="dots" gap={16} size={1} color="#d0d0d0" />
@@ -620,6 +661,47 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                     />
                 )}
             </div>
+
+            {/* ── Right-click Context Menu ─────────────────── */}
+            {contextMenu && (
+                <div
+                    style={{ position: 'fixed', inset: 0, zIndex: 998 }}
+                    onClick={() => setContextMenu(null)}
+                    onContextMenu={(e) => { e.preventDefault(); setContextMenu(null); }}
+                >
+                    <div
+                        className="swp-context-menu"
+                        style={{ left: contextMenu.screenX, top: contextMenu.screenY }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="swp-context-menu__header">Add node here</div>
+                        <button className="swp-context-menu__item" onClick={() => addNodeAtPosition('trigger', contextMenu.flowX, contextMenu.flowY)}>
+                            <span className="swp-context-menu__icon" style={{ background: 'var(--swp-trigger)' }}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </span>
+                            Trigger
+                        </button>
+                        <button className="swp-context-menu__item" onClick={() => addNodeAtPosition('condition', contextMenu.flowX, contextMenu.flowY)}>
+                            <span className="swp-context-menu__icon" style={{ background: 'var(--swp-condition)' }}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                            </span>
+                            Condition
+                        </button>
+                        <button className="swp-context-menu__item" onClick={() => addNodeAtPosition('action', contextMenu.flowX, contextMenu.flowY)}>
+                            <span className="swp-context-menu__icon" style={{ background: 'var(--swp-action)' }}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            </span>
+                            Action
+                        </button>
+                        <button className="swp-context-menu__item" onClick={() => addNodeAtPosition('delay', contextMenu.flowX, contextMenu.flowY)}>
+                            <span className="swp-context-menu__icon" style={{ background: 'var(--swp-delay)' }}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </span>
+                            Delay
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* ── Test Run Modal ────────────────────────────── */}
             {testRunModal && (

@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import { ReactFlowProvider } from '@xyflow/react';
 import App from './App';
 
 const container = document.getElementById('sylius-workflow-editor');
@@ -21,6 +22,7 @@ if (container) {
 
     const root = createRoot(container);
     root.render(
+        <ReactFlowProvider>
         <App
             initialGraph={initialGraph}
             workflowId={workflowId}
@@ -31,5 +33,6 @@ if (container) {
             backUrl={backUrl}
             productSearchUrl={productSearchUrl}
         />
+        </ReactFlowProvider>
     );
 }

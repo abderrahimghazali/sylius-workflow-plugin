@@ -26,6 +26,7 @@ export function deserializeGraph(graph) {
         type: 'insertButton',
         animated: false,
         style: { stroke: '#94A3B8', strokeWidth: 1.5 },
+        markerEnd: { type: 'arrowclosed', width: 16, height: 16, color: '#94A3B8' },
     }));
 
     return { nodes, edges };
