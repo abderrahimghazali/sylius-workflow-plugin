@@ -59,12 +59,16 @@ final class DryRunWorkflowExecutor
 
         $path = [];
         $results = [];
-        $currentNodeId = $startNodeId;
+        $queue = [$startNodeId];
+        $visited = [];
 
-        while ($currentNodeId !== null) {
-            if (!isset($nodeMap[$currentNodeId])) {
-                break;
+        while (!empty($queue)) {
+            $currentNodeId = array_shift($queue);
+
+            if (isset($visited[$currentNodeId]) || !isset($nodeMap[$currentNodeId])) {
+                continue;
             }
+            $visited[$currentNodeId] = true;
 
             $path[] = $currentNodeId;
             $nodeData = $nodeMap[$currentNodeId];
@@ -80,23 +84,25 @@ final class DryRunWorkflowExecutor
             $results[$currentNodeId] = $result;
 
             if ($result['status'] === 'skipped') {
-                // Check for "otherwise" branch on conditions
                 if ($nodeType === NodeType::Condition) {
                     $falseNext = $this->getNextNodeId($currentNodeId, $edges, 'exit-false');
                     if ($falseNext !== null) {
-                        $currentNodeId = $falseNext;
-                        continue;
+                        $queue[] = $falseNext;
                     }
                 }
-                break;
+                continue;
             }
 
             if ($nodeType === NodeType::Condition) {
-                $currentNodeId = $this->getNextNodeId($currentNodeId, $edges, 'exit-true')
+                $trueNext = $this->getNextNodeId($currentNodeId, $edges, 'exit-true')
                     ?? ($adjacency[$currentNodeId][0] ?? null);
+                if ($trueNext !== null) {
+                    $queue[] = $trueNext;
+                }
             } else {
-                $nextNodes = $adjacency[$currentNodeId] ?? [];
-                $currentNodeId = !empty($nextNodes) ? $nextNodes[0] : null;
+                foreach ($adjacency[$currentNodeId] ?? [] as $nextNodeId) {
+                    $queue[] = $nextNodeId;
+                }
             }
         }
 

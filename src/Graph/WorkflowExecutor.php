@@ -73,11 +73,22 @@ final class WorkflowExecutor
         }
         $context->set('workflow_name', $campaign->getName());
 
-        // Walk the graph (max 200 steps to prevent runaway execution)
-        $currentNodeId = $startNodeId;
+        // Walk the graph using a queue (supports parallel branches)
+        $queue = [$startNodeId];
+        $visited = [];
         $stepCount = 0;
         $maxSteps = 200;
-        while ($currentNodeId !== null) {
+        $hasDelay = false;
+
+        while (!empty($queue)) {
+            $currentNodeId = array_shift($queue);
+
+            // Skip already visited nodes (prevents re-execution in diamond patterns)
+            if (isset($visited[$currentNodeId])) {
+                continue;
+            }
+            $visited[$currentNodeId] = true;
+
             if (++$stepCount > $maxSteps) {
                 $run->markFailed('Execution exceeded maximum step limit (' . $maxSteps . ').');
                 $this->entityManager->flush();
@@ -88,9 +99,7 @@ final class WorkflowExecutor
 
             if (!isset($nodeMap[$currentNodeId])) {
                 $run->addLogEntry($currentNodeId, 'failed', 'Node not found in graph.');
-                $run->markFailed('Node "' . $currentNodeId . '" not found.');
-                $this->entityManager->flush();
-                return $run;
+                continue;
             }
 
             $nodeData = $nodeMap[$currentNodeId];
@@ -99,9 +108,9 @@ final class WorkflowExecutor
             $result = $this->processNode($nodeType, $nodeData, $context, $run, $campaign, $adjacency, $currentNodeId);
 
             if ($result === null) {
-                // Delay node dispatched a message — stop current execution
-                $this->entityManager->flush();
-                return $run;
+                // Delay node dispatched a message — stop this branch
+                $hasDelay = true;
+                continue;
             }
 
             if ($result === false) {
@@ -109,23 +118,32 @@ final class WorkflowExecutor
                 if ($nodeType === NodeType::Condition) {
                     $falseNext = $this->getNextNodeId($currentNodeId, $edges, 'exit-false');
                     if ($falseNext !== null) {
-                        $currentNodeId = $falseNext;
-                        continue;
+                        $queue[] = $falseNext;
                     }
                 }
-                $run->markCompleted();
-                $this->entityManager->flush();
-                return $run;
+                // This branch stops here — other branches in the queue continue
+                continue;
             }
 
-            // Move to next node — for conditions, follow "then" branch
+            // Enqueue next nodes — for conditions, follow "then" branch
             if ($nodeType === NodeType::Condition) {
-                $currentNodeId = $this->getNextNodeId($currentNodeId, $edges, 'exit-true')
+                $trueNext = $this->getNextNodeId($currentNodeId, $edges, 'exit-true')
                     ?? $this->getNextNodeId($currentNodeId, $edges, null);
+                if ($trueNext !== null) {
+                    $queue[] = $trueNext;
+                }
             } else {
-                $nextNodes = $adjacency[$currentNodeId] ?? [];
-                $currentNodeId = !empty($nextNodes) ? $nextNodes[0] : null;
+                // Enqueue ALL outgoing edges (supports parallel branches)
+                foreach ($adjacency[$currentNodeId] ?? [] as $nextNodeId) {
+                    $queue[] = $nextNodeId;
+                }
             }
+        }
+
+        if ($hasDelay) {
+            // At least one branch hit a delay — run stays running
+            $this->entityManager->flush();
+            return $run;
         }
 
         $run->markCompleted();
