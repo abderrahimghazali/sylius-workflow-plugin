@@ -103,3 +103,9 @@ sylius_workflow_api_test_run:
     methods: [POST]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Api\TestRunController
+
+sylius_workflow_api_product_search:
+    path: /workflows/products/search
+    methods: [GET]
+    defaults:
+        _controller: Abderrahim\SyliusWorkflowPlugin\Api\ProductSearchController

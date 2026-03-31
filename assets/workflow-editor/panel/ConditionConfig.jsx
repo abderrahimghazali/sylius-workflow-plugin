@@ -1,4 +1,5 @@
 import { RULE_LABELS } from '../utils/nodeLabels';
+import ProductAutocomplete from './ProductAutocomplete';
 
 // Operators per rule type
 const RULE_OPERATORS = {
@@ -20,13 +21,13 @@ const VALUE_CONFIG = {
     customer_tag: { type: 'text', placeholder: 'e.g. vip' },
     customer_country: { type: 'text', placeholder: 'e.g. US, FR, DE' },
     loyalty_tier: { type: 'text', placeholder: 'e.g. Gold, Silver' },
-    order_product: { type: 'text', placeholder: 'Product code (e.g. MUG_01)' },
+    order_product: { type: 'product_autocomplete' },
     product_stock: { type: 'number', placeholder: 'Stock threshold (e.g. 5)', hint: 'Number of units. Used for "low stock" check.' },
     order_has_coupon: { type: 'hidden' },
     workflow_run_count: { type: 'number', placeholder: 'e.g. 3' },
 };
 
-export default function ConditionConfig({ config, onChange }) {
+export default function ConditionConfig({ config, onChange, productSearchUrl }) {
     const update = (field, value) => onChange({ ...config, [field]: value });
     const rule = config.rule || '';
     const operators = RULE_OPERATORS[rule] || {};
@@ -67,7 +68,13 @@ export default function ConditionConfig({ config, onChange }) {
             {rule && valueConfig.type !== 'hidden' && (
                 <div className="swp-panel__section">
                     <label className="swp-panel__label">Value</label>
-                    {valueConfig.type === 'select' ? (
+                    {valueConfig.type === 'product_autocomplete' ? (
+                        <ProductAutocomplete
+                            value={config.value || ''}
+                            onChange={(val) => update('value', val)}
+                            searchUrl={productSearchUrl}
+                        />
+                    ) : valueConfig.type === 'select' ? (
                         <select
                             className="swp-panel__select"
                             value={config.value || ''}

@@ -11,7 +11,7 @@ const NODE_TYPE_OPTIONS = [
     { value: 'delay', label: 'Delay' },
 ];
 
-export default function ConfigPanel({ node, onUpdate, onDelete, onClose }) {
+export default function ConfigPanel({ node, onUpdate, onDelete, onClose, productSearchUrl }) {
     if (!node) return null;
 
     const { data } = node;
@@ -62,7 +62,7 @@ export default function ConfigPanel({ node, onUpdate, onDelete, onClose }) {
                 <TriggerConfig config={config} onChange={handleConfigChange} />
             )}
             {nodeType === 'condition' && (
-                <ConditionConfig config={config} onChange={handleConfigChange} />
+                <ConditionConfig config={config} onChange={handleConfigChange} productSearchUrl={productSearchUrl} />
             )}
             {nodeType === 'action' && (
                 <ActionConfig config={config} onChange={handleConfigChange} />

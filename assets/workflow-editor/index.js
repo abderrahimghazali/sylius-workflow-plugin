@@ -10,6 +10,7 @@ if (container) {
     const initialStatus = container.dataset.workflowStatus || 'draft';
     const runsUrl = container.dataset.runsUrl || '';
     const backUrl = container.dataset.backUrl || '';
+    const productSearchUrl = container.dataset.productSearchUrl || '';
 
     let initialGraph = { nodes: [], edges: [] };
     try {
@@ -28,6 +29,7 @@ if (container) {
             initialStatus={initialStatus}
             runsUrl={runsUrl}
             backUrl={backUrl}
+            productSearchUrl={productSearchUrl}
         />
     );
 }

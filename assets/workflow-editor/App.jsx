@@ -89,7 +89,7 @@ const NODE_TYPE_TO_COMPONENT = {
     delay: 'delayNode',
 };
 
-export default function App({ initialGraph, workflowId, apiUrl, initialName, initialStatus, runsUrl, backUrl }) {
+export default function App({ initialGraph, workflowId, apiUrl, initialName, initialStatus, runsUrl, backUrl, productSearchUrl }) {
     const { nodes: initNodes, edges: initEdges } = deserializeGraph(initialGraph);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(initNodes);
@@ -605,6 +605,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                         onUpdate={updateNodeData}
                         onDelete={deleteNode}
                         onClose={() => setSelectedNodeId(null)}
+                        productSearchUrl={productSearchUrl}
                     />
                 )}
             </div>

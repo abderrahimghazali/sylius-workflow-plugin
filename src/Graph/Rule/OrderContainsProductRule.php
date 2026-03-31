@@ -21,7 +21,8 @@ final class OrderContainsProductRule implements RuleInterface
             return false;
         }
 
-        $productCode = $value;
+        $productCodes = array_map('trim', explode(',', $value));
+        $productCodes = array_filter($productCodes);
         $found = false;
 
         foreach ($subject->getItems() as $item) {
@@ -35,7 +36,7 @@ final class OrderContainsProductRule implements RuleInterface
                 continue;
             }
 
-            if ($product->getCode() === $productCode) {
+            if (\in_array($product->getCode(), $productCodes, true)) {
                 $found = true;
                 break;
             }
