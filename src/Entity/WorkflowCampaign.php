@@ -40,6 +40,7 @@ class WorkflowCampaign implements WorkflowCampaignInterface
         $this->runs = new ArrayCollection();
         $this->triggerLogs = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
