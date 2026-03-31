@@ -84,3 +84,8 @@ services:
             $promotionFactory: '@sylius.factory.promotion'
             $promotionActionFactory: '@sylius.factory.promotion_action'
             $channelRepository: '@sylius.repository.channel'
+
+    # AssignCustomerGroupAction — inject Sylius customer group repository
+    Abderrahim\SyliusWorkflowPlugin\Graph\Action\AssignCustomerGroupAction:
+        arguments:
+            $customerGroupRepository: '@sylius.repository.customer_group'

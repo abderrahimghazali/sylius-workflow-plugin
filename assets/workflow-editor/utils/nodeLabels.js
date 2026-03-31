@@ -19,6 +19,15 @@ const RULE_LABELS = {
     'product_stock': 'Product stock level',
     'order_has_coupon': 'Order has coupon',
     'workflow_run_count': 'Workflow run count',
+    'cart_item_count': 'Cart item count',
+    'order_currency': 'Order currency',
+    'order_shipping_method': 'Shipping method',
+    'customer_order_count': 'Customer lifetime orders',
+    'customer_lifetime_spend': 'Customer lifetime spend',
+    'customer_age_days': 'Customer registered days ago',
+    'customer_group': 'Customer group',
+    'order_taxon': 'Order contains category',
+    'order_is_guest': 'Guest order',
 };
 
 const OPERATOR_LABELS = {
@@ -44,6 +53,11 @@ const ACTION_TYPE_LABELS = {
     'add_loyalty_points': 'Add loyalty points',
     'send_webhook': 'Send webhook',
     'add_order_note': 'Add order note',
+    'add_order_tag': 'Add order tag',
+    'subscribe_newsletter': 'Subscribe to newsletter',
+    'send_sms': 'Send SMS',
+    'track_event': 'Track analytics event',
+    'assign_customer_group': 'Assign customer group',
 };
 
 const DELAY_UNIT_LABELS = {
@@ -90,6 +104,16 @@ export function getActionLabel(config) {
             return config.url ? `Webhook: ${config.url}` : label;
         case 'add_order_note':
             return config.note ? `Note: "${config.note.substring(0, 30)}..."` : label;
+        case 'add_order_tag':
+            return config.tag ? `Tag order: "${config.tag}"` : label;
+        case 'subscribe_newsletter':
+            return 'Subscribe to newsletter';
+        case 'send_sms':
+            return config.message ? `SMS: "${config.message.substring(0, 30)}..."` : label;
+        case 'track_event':
+            return config.event_name ? `Track: "${config.event_name}"` : label;
+        case 'assign_customer_group':
+            return config.group_code ? `Group: "${config.group_code}"` : label;
         default:
             return label;
     }

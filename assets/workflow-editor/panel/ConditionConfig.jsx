@@ -12,6 +12,15 @@ const RULE_OPERATORS = {
     product_stock: { 'out_of_stock': 'out of stock', 'low_stock': 'low stock (≤ threshold)', 'in_stock': 'in stock' },
     order_has_coupon: { 'is': 'has coupon', 'is_not': 'does not have coupon' },
     workflow_run_count: { 'gt': '>', 'lt': '<', 'gte': '≥', 'lte': '≤', 'is': '=', 'is_not': '≠' },
+    cart_item_count: { 'gt': '>', 'lt': '<', 'gte': '≥', 'lte': '≤', 'is': '=', 'is_not': '≠' },
+    order_currency: { 'is': 'is', 'is_not': 'is not' },
+    order_shipping_method: { 'is': 'is', 'is_not': 'is not' },
+    customer_order_count: { 'gt': '>', 'lt': '<', 'gte': '≥', 'lte': '≤', 'is': '=', 'is_not': '≠' },
+    customer_lifetime_spend: { 'gt': '>', 'lt': '<', 'gte': '≥', 'lte': '≤', 'is': '=', 'is_not': '≠' },
+    customer_age_days: { 'gt': '>', 'lt': '<', 'gte': '≥', 'lte': '≤' },
+    customer_group: { 'is': 'is', 'is_not': 'is not' },
+    order_taxon: { 'contains': 'contains', 'not_contains': 'does not contain' },
+    order_is_guest: { 'is': 'is', 'is_not': 'is not' },
 };
 
 // Value config per rule
@@ -23,8 +32,17 @@ const VALUE_CONFIG = {
     loyalty_tier: { type: 'text', placeholder: 'e.g. Gold, Silver' },
     order_product: { type: 'product_autocomplete' },
     product_stock: { type: 'number', placeholder: 'Stock threshold (e.g. 5)', hint: 'Number of units. Used for "low stock" check.' },
-    order_has_coupon: { type: 'hidden' },
+    order_has_coupon: { type: 'text', placeholder: 'Leave empty = any coupon, or enter code' },
     workflow_run_count: { type: 'number', placeholder: 'e.g. 3' },
+    cart_item_count: { type: 'number', placeholder: 'e.g. 3' },
+    order_currency: { type: 'text', placeholder: 'e.g. EUR, USD' },
+    order_shipping_method: { type: 'text', placeholder: 'Shipping method code' },
+    customer_order_count: { type: 'number', placeholder: 'e.g. 5' },
+    customer_lifetime_spend: { type: 'number', placeholder: 'e.g. 50000 ($500.00)', hint: 'Value is in cents' },
+    customer_age_days: { type: 'number', placeholder: 'e.g. 30 (days since registration)' },
+    customer_group: { type: 'text', placeholder: 'e.g. wholesale, vip' },
+    order_taxon: { type: 'text', placeholder: 'Taxon code (e.g. t-shirts)' },
+    order_is_guest: { type: 'select', options: { 'true': 'Yes', 'false': 'No' } },
 };
 
 export default function ConditionConfig({ config, onChange, productSearchUrl }) {

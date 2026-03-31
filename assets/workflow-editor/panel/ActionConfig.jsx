@@ -203,6 +203,98 @@ export default function ActionConfig({ config, onChange }) {
                     />
                 </div>
             )}
+
+            {actionType === 'add_order_tag' && (
+                <div className="swp-panel__section">
+                    <label className="swp-panel__label">Tag</label>
+                    <input
+                        className="swp-panel__input"
+                        type="text"
+                        value={config.tag || ''}
+                        onChange={(e) => update('tag', e.target.value)}
+                        placeholder="e.g. priority, fragile, vip-order"
+                    />
+                </div>
+            )}
+
+            {actionType === 'subscribe_newsletter' && (
+                <div className="swp-panel__section">
+                    <div className="swp-panel__preview">
+                        Subscribes the customer to the newsletter automatically.
+                    </div>
+                </div>
+            )}
+
+            {actionType === 'send_sms' && (
+                <>
+                    <div className="swp-panel__section">
+                        <label className="swp-panel__label">Phone (optional)</label>
+                        <input
+                            className="swp-panel__input"
+                            type="text"
+                            value={config.phone || ''}
+                            onChange={(e) => update('phone', e.target.value)}
+                            placeholder="Leave empty to use customer phone"
+                        />
+                    </div>
+                    <div className="swp-panel__section">
+                        <label className="swp-panel__label">Message</label>
+                        <textarea
+                            className="swp-panel__input"
+                            rows={3}
+                            value={config.message || ''}
+                            onChange={(e) => update('message', e.target.value)}
+                            placeholder="Your order {order_number} has been shipped!"
+                            style={{ resize: 'vertical' }}
+                        />
+                        <div className="swp-panel__preview" style={{ marginTop: '6px' }}>
+                            Dispatches workflow.sms.send event. Register a listener with your SMS provider (Twilio, Vonage, etc.)
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {actionType === 'track_event' && (
+                <>
+                    <div className="swp-panel__section">
+                        <label className="swp-panel__label">Event Name</label>
+                        <input
+                            className="swp-panel__input"
+                            type="text"
+                            value={config.event_name || ''}
+                            onChange={(e) => update('event_name', e.target.value)}
+                            placeholder="e.g. purchase_completed, vip_upgrade"
+                        />
+                    </div>
+                    <div className="swp-panel__section">
+                        <label className="swp-panel__label">Properties (optional JSON)</label>
+                        <textarea
+                            className="swp-panel__input"
+                            rows={2}
+                            value={config.properties || ''}
+                            onChange={(e) => update('properties', e.target.value)}
+                            placeholder='{"source": "workflow", "category": "order"}'
+                            style={{ resize: 'vertical' }}
+                        />
+                        <div className="swp-panel__preview" style={{ marginTop: '6px' }}>
+                            Dispatches workflow.analytics.track event. Register a listener for GA4, Segment, etc.
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {actionType === 'assign_customer_group' && (
+                <div className="swp-panel__section">
+                    <label className="swp-panel__label">Group Code</label>
+                    <input
+                        className="swp-panel__input"
+                        type="text"
+                        value={config.group_code || ''}
+                        onChange={(e) => update('group_code', e.target.value)}
+                        placeholder="e.g. wholesale, vip, b2b"
+                    />
+                </div>
+            )}
         </>
     );
 }
