@@ -113,19 +113,19 @@
 
 .swp-node__branches {
     display: flex;
+    flex-direction: column;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
     position: relative;
 }
 
 .swp-node__branch {
-    flex: 1;
     text-align: center;
-    padding: 6px 0 10px;
+    padding: 6px 0;
     position: relative;
 }
 
 .swp-node__branch--true {
-    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .swp-node__branch-label {
@@ -216,12 +216,12 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-.swp-node .react-flow__handle-top {
-    top: -4px;
+.swp-node .react-flow__handle-left {
+    left: -4px;
 }
 
-.swp-node .react-flow__handle-bottom {
-    bottom: -4px;
+.swp-node .react-flow__handle-right {
+    right: -4px;
 }
 
 /* ── Toolbar ─────────────────────────────────────────────── */

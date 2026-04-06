@@ -39,7 +39,7 @@ final class WorkflowCampaignController extends AbstractController
                     [
                         'id' => 'node-1',
                         'type' => 'trigger',
-                        'position' => ['x' => 300, 'y' => 40],
+                        'position' => ['x' => 40, 'y' => 200],
                         'config' => ['event' => 'order.completed'],
                     ],
                 ],

@@ -9,7 +9,7 @@ export function deserializeGraph(graph) {
     const nodes = backendNodes.map((node, index) => ({
         id: node.id,
         type: nodeTypeToComponent(node.type),
-        position: node.position || { x: 300, y: 40 + index * 160 },
+        position: node.position || { x: 40 + index * 320, y: 200 },
         data: {
             nodeType: node.type,
             config: node.config || {},

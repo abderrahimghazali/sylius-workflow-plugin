@@ -250,13 +250,13 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
             }
 
             const id = generateNodeId();
-            const yPositions = nodes.map((n) => n.position.y);
-            const maxY = yPositions.length > 0 ? Math.max(...yPositions) : -120;
+            const xPositions = nodes.map((n) => n.position.x);
+            const maxX = xPositions.length > 0 ? Math.max(...xPositions) : -280;
 
             const newNode = {
                 id,
                 type: NODE_TYPE_TO_COMPONENT[nodeType],
-                position: { x: 300, y: maxY + 160 },
+                position: { x: maxX + 320, y: 200 },
                 data: {
                     nodeType,
                     config: {},
@@ -321,66 +321,66 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                 if (incoming[e.target] !== undefined) incoming[e.target]++;
             });
 
-            // Two-pass tree layout: 1) measure subtree widths, 2) assign positions
+            // Left-to-right tree layout: columns = depth, rows = branches
             const roots = Object.keys(incoming).filter((id) => incoming[id] === 0);
             const posMap = {};
-            const NODE_W = 280;
-            const GAP_X = 40;
-            const ROW_H = 180;
+            const NODE_H = 120;
+            const GAP_Y = 40;
+            const COL_W = 320;
             const visited = new Set();
-            const widthCache = {};
+            const heightCache = {};
 
-            // Pass 1: calculate the width each subtree needs
-            function subtreeWidth(nodeId) {
-                if (widthCache[nodeId] !== undefined) return widthCache[nodeId];
-                if (visited.has(nodeId)) { widthCache[nodeId] = NODE_W; return NODE_W; }
+            // Pass 1: calculate the height each subtree needs
+            function subtreeHeight(nodeId) {
+                if (heightCache[nodeId] !== undefined) return heightCache[nodeId];
+                if (visited.has(nodeId)) { heightCache[nodeId] = NODE_H; return NODE_H; }
 
                 const children = (adj[nodeId] || []).filter((c) => !visited.has(c.target));
                 if (children.length === 0) {
-                    widthCache[nodeId] = NODE_W;
-                    return NODE_W;
+                    heightCache[nodeId] = NODE_H;
+                    return NODE_H;
                 }
 
-                const childWidths = children.map((c) => subtreeWidth(c.target));
-                const totalChildWidth = childWidths.reduce((a, b) => a + b, 0) + (children.length - 1) * GAP_X;
-                widthCache[nodeId] = Math.max(NODE_W, totalChildWidth);
-                return widthCache[nodeId];
+                const childHeights = children.map((c) => subtreeHeight(c.target));
+                const totalChildHeight = childHeights.reduce((a, b) => a + b, 0) + (children.length - 1) * GAP_Y;
+                heightCache[nodeId] = Math.max(NODE_H, totalChildHeight);
+                return heightCache[nodeId];
             }
 
-            // Pass 2: assign x,y positions centered over children
-            function assignPositions(nodeId, row, centerX) {
+            // Pass 2: assign x,y positions — x = column (depth), y = centered over children
+            function assignPositions(nodeId, col, centerY) {
                 if (visited.has(nodeId)) return;
                 visited.add(nodeId);
-                posMap[nodeId] = { x: centerX - NODE_W / 2, y: row * ROW_H + 40 };
+                posMap[nodeId] = { x: col * COL_W + 40, y: centerY - NODE_H / 2 };
 
                 const children = (adj[nodeId] || []).filter((c) => !visited.has(c.target));
                 if (children.length === 0) return;
 
-                const childWidths = children.map((c) => subtreeWidth(c.target));
-                const totalWidth = childWidths.reduce((a, b) => a + b, 0) + (children.length - 1) * GAP_X;
-                let startX = centerX - totalWidth / 2;
+                const childHeights = children.map((c) => subtreeHeight(c.target));
+                const totalHeight = childHeights.reduce((a, b) => a + b, 0) + (children.length - 1) * GAP_Y;
+                let startY = centerY - totalHeight / 2;
 
                 children.forEach((child, i) => {
-                    const childCenter = startX + childWidths[i] / 2;
-                    assignPositions(child.target, row + 1, childCenter);
-                    startX += childWidths[i] + GAP_X;
+                    const childCenter = startY + childHeights[i] / 2;
+                    assignPositions(child.target, col + 1, childCenter);
+                    startY += childHeights[i] + GAP_Y;
                 });
             }
 
-            let offsetX = NODE_W;
+            let offsetY = NODE_H;
             for (const root of roots) {
-                subtreeWidth(root);
-                const w = widthCache[root] || NODE_W;
-                assignPositions(root, 0, offsetX + w / 2);
-                offsetX += w + GAP_X;
+                subtreeHeight(root);
+                const h = heightCache[root] || NODE_H;
+                assignPositions(root, 0, offsetY + h / 2);
+                offsetY += h + GAP_Y;
             }
 
             // Place any unvisited nodes at the end
-            let extraRow = Object.keys(posMap).length;
+            let extraCol = Object.keys(posMap).length;
             nds.forEach((n) => {
                 if (!posMap[n.id]) {
-                    posMap[n.id] = { x: COL_W, y: extraRow * ROW_H + 40 };
-                    extraRow++;
+                    posMap[n.id] = { x: 40, y: extraCol * NODE_H + 40 };
+                    extraCol++;
                 }
             });
 
@@ -569,7 +569,7 @@ export default function App({ initialGraph, workflowId, apiUrl, initialName, ini
                     </div>
 
                     <button className="swp-btn" onClick={autoArrange}>
-                        ↕ Auto-arrange
+                        ↔ Auto-arrange
                     </button>
 
                     <button className="swp-btn" onClick={() => setTestRunModal(true)}>
