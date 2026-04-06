@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 #[AsController]
 #[IsGranted('ROLE_ADMINISTRATION_ACCESS')]
@@ -92,7 +93,8 @@ final class WorkflowCampaignController extends AbstractController
         ]);
     }
 
-    public function delete(int $id): Response
+    #[IsCsrfTokenValid('workflow_delete', tokenKey: '_csrf_token')]
+    public function delete(int $id, Request $request): Response
     {
         $campaign = $this->entityManager->find(WorkflowCampaign::class, $id);
         if ($campaign === null) {
@@ -107,8 +109,13 @@ final class WorkflowCampaignController extends AbstractController
         return $this->redirectToRoute('workflow_admin_campaign_index');
     }
 
-    public function toggleEnabled(int $id): JsonResponse
+    public function toggleEnabled(int $id, Request $request): JsonResponse
     {
+        $token = $request->headers->get('X-CSRF-Token') ?? $request->query->get('_csrf_token', '');
+        if (!$this->isCsrfTokenValid('workflow_toggle', $token)) {
+            return new JsonResponse(['error' => 'Invalid CSRF token.'], Response::HTTP_FORBIDDEN);
+        }
+
         $campaign = $this->entityManager->find(WorkflowCampaign::class, $id);
         if ($campaign === null) {
             return new JsonResponse(['error' => 'Campaign not found.'], Response::HTTP_NOT_FOUND);

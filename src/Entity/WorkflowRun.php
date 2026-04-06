@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace Abderrahim\SyliusWorkflowPlugin\Entity;
 
+use Abderrahim\SyliusWorkflowPlugin\Enum\RunStatus;
+
 class WorkflowRun implements WorkflowRunInterface
 {
-    public const STATUS_RUNNING = 'running';
-    public const STATUS_COMPLETED = 'completed';
-    public const STATUS_FAILED = 'failed';
-    public const STATUS_SKIPPED = 'skipped';
-
     protected ?int $id = null;
 
-    protected WorkflowCampaignInterface $campaign;
+    protected ?WorkflowCampaignInterface $campaign = null;
 
     protected string $subjectType = '';
 
     protected int $subjectId = 0;
 
-    protected string $status = self::STATUS_RUNNING;
+    protected RunStatus $status = RunStatus::Running;
 
     protected string $currentNodeId = '';
 
@@ -71,12 +68,12 @@ class WorkflowRun implements WorkflowRunInterface
         $this->subjectId = $subjectId;
     }
 
-    public function getStatus(): string
+    public function getStatus(): RunStatus
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): void
+    public function setStatus(RunStatus $status): void
     {
         $this->status = $status;
     }
@@ -96,18 +93,24 @@ class WorkflowRun implements WorkflowRunInterface
         return $this->executionLog;
     }
 
-    public function addLogEntry(string $nodeId, string $status, string $message): void
+    public function addLogEntry(string $nodeId, string $status, string $message, ?string $actionType = null): void
     {
         if (\count($this->executionLog) >= 500) {
             return;
         }
 
-        $this->executionLog[] = [
+        $entry = [
             'nodeId' => $nodeId,
             'status' => $status,
             'message' => $message,
             'timestamp' => (new \DateTimeImmutable())->format('c'),
         ];
+
+        if ($actionType !== null) {
+            $entry['actionType'] = $actionType;
+        }
+
+        $this->executionLog[] = $entry;
     }
 
     public function getStartedAt(): \DateTimeImmutable
@@ -137,20 +140,20 @@ class WorkflowRun implements WorkflowRunInterface
 
     public function markCompleted(): void
     {
-        $this->status = self::STATUS_COMPLETED;
+        $this->status = RunStatus::Completed;
         $this->completedAt = new \DateTimeImmutable();
     }
 
     public function markFailed(string $errorMessage): void
     {
-        $this->status = self::STATUS_FAILED;
+        $this->status = RunStatus::Failed;
         $this->errorMessage = $errorMessage;
         $this->completedAt = new \DateTimeImmutable();
     }
 
     public function markSkipped(): void
     {
-        $this->status = self::STATUS_SKIPPED;
+        $this->status = RunStatus::Skipped;
         $this->completedAt = new \DateTimeImmutable();
     }
 }

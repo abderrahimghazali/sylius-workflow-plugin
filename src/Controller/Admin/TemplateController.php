@@ -9,9 +9,12 @@ use Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus;
 use Abderrahim\SyliusWorkflowPlugin\Template\WorkflowTemplateInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 
@@ -19,8 +22,8 @@ use Twig\Environment;
 #[IsGranted('ROLE_ADMINISTRATION_ACCESS')]
 final class TemplateController
 {
-    /** @var iterable<WorkflowTemplateInterface> */
-    private iterable $templates;
+    /** @var array<string, WorkflowTemplateInterface> */
+    private array $templatesBySlug = [];
 
     public function __construct(
         iterable $templates,
@@ -28,35 +31,27 @@ final class TemplateController
         private readonly Environment $twig,
         private readonly RouterInterface $router,
     ) {
-        $this->templates = $templates;
+        foreach ($templates as $template) {
+            $this->templatesBySlug[self::slugify($template)] = $template;
+        }
     }
 
     public function index(): Response
     {
-        $templateList = [];
-        foreach ($this->templates as $template) {
-            $templateList[] = $template;
-        }
-
         $content = $this->twig->render('@SyliusWorkflowPlugin/admin/template/index.html.twig', [
-            'templates' => $templateList,
+            'templates' => $this->templatesBySlug,
         ]);
 
         return new Response($content);
     }
 
-    public function install(string $templateClass): Response
+    #[IsCsrfTokenValid('workflow_template_install', tokenKey: '_csrf_token')]
+    public function install(string $templateSlug, Request $request): Response
     {
-        $template = null;
-        foreach ($this->templates as $t) {
-            if ($t::class === $templateClass) {
-                $template = $t;
-                break;
-            }
-        }
+        $template = $this->templatesBySlug[$templateSlug] ?? null;
 
         if ($template === null) {
-            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('Template not found.');
+            throw new NotFoundHttpException('Template not found.');
         }
 
         $campaign = new WorkflowCampaign();
@@ -71,5 +66,10 @@ final class TemplateController
         return new RedirectResponse(
             $this->router->generate('sylius_workflow_admin_canvas', ['id' => $campaign->getId()])
         );
+    }
+
+    public static function slugify(WorkflowTemplateInterface $template): string
+    {
+        return $template->getCategory() . '-' . preg_replace('/[^a-z0-9]+/', '-', strtolower($template->getName()));
     }
 }

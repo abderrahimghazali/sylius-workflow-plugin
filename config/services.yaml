@@ -26,6 +26,7 @@ services:
         arguments:
             $rules: !tagged_iterator sylius_workflow.rule
             $actions: !tagged_iterator sylius_workflow.action
+            $maxSteps: '%sylius_workflow.execution.max_steps%'
 
     # Menu Listener
     Abderrahim\SyliusWorkflowPlugin\Menu\AdminMenuListener:
@@ -84,6 +85,12 @@ services:
             $promotionFactory: '@sylius.factory.promotion'
             $promotionActionFactory: '@sylius.factory.promotion_action'
             $channelRepository: '@sylius.repository.channel'
+
+    # SendWebhookAction — inject config
+    Abderrahim\SyliusWorkflowPlugin\Graph\Action\SendWebhookAction:
+        arguments:
+            $timeout: '%sylius_workflow.webhook.timeout%'
+            $allowHttp: '%sylius_workflow.webhook.allow_http%'
 
     # AssignCustomerGroupAction — inject Sylius customer group repository
     Abderrahim\SyliusWorkflowPlugin\Graph\Action\AssignCustomerGroupAction:

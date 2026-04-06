@@ -36,7 +36,7 @@
                 } %}
 
                 <div class="row row-deck row-cards">
-                    {% for template in templates %}
+                    {% for slug, template in templates %}
                         <div class="col-sm-6 col-lg-4">
                             <div class="card">
                                 <div class="card-body">
@@ -50,7 +50,8 @@
                                     <p class="text-secondary" style="font-size: 0.85rem; min-height: 40px;">
                                         {{ template.description }}
                                     </p>
-                                    <form method="post" action="{{ path('workflow_admin_template_install', {templateClass: template.class}) }}">
+                                    <form method="post" action="{{ path('workflow_admin_template_install', {templateSlug: slug}) }}">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('workflow_template_install') }}">
                                         <button type="submit" class="btn btn-primary w-100">
                                             {{ 'workflow.ui.install_template'|trans }}
                                         </button>

@@ -6,6 +6,7 @@ namespace Abderrahim\SyliusWorkflowPlugin\Messenger;
 
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign;
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowRun;
+use Abderrahim\SyliusWorkflowPlugin\Enum\RunStatus;
 use Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus;
 use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowContext;
 use Abderrahim\SyliusWorkflowPlugin\Graph\WorkflowExecutor;
@@ -54,10 +55,10 @@ final class DelayedWorkflowMessageHandler
             return;
         }
 
-        if ($run->getStatus() !== WorkflowRun::STATUS_RUNNING) {
+        if ($run->getStatus() !== RunStatus::Running) {
             $this->logger->info('Delayed workflow: run is no longer running.', [
                 'runId' => $run->getId(),
-                'status' => $run->getStatus(),
+                'status' => $run->getStatus()->value,
             ]);
             return;
         }

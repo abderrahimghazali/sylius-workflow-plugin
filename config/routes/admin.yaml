@@ -33,7 +33,7 @@ workflow_admin_template_index:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\TemplateController::index
 
 workflow_admin_template_install:
-    path: /workflows/templates/{templateClass}/install
+    path: /workflows/templates/{templateSlug}/install
     methods: [POST]
     defaults:
         _controller: Abderrahim\SyliusWorkflowPlugin\Controller\Admin\TemplateController::install

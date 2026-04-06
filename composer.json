@@ -20,8 +20,9 @@
         "doctrine/orm": "^2.17 || ^3.0",
         "sylius/sylius": "^2.1",
         "symfony/framework-bundle": "^7.0",
-        "symfony/messenger": "^7.0",
-        "symfony/http-client": "^7.0"
+        "symfony/http-client": "^7.0",
+        "symfony/mailer": "^7.0",
+        "symfony/messenger": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
@@ -47,6 +48,10 @@
             "name": "Sylius Workflow Plugin",
             "description": "Visual marketing automation engine with node-based canvas editor"
         }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse"
     },
     "config": {
         "sort-packages": true

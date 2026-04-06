@@ -42,8 +42,8 @@
                                     'skipped': 'warning',
                                     'running': 'info',
                                 } %}
-                                <span class="badge text-white bg-{{ status_colors[run.status] ?? 'secondary' }}">
-                                    {{ run.status }}
+                                <span class="badge text-white bg-{{ status_colors[run.status.value] ?? 'secondary' }}">
+                                    {{ run.status.value }}
                                 </span>
                             </div>
                             <div class="col-sm-3">

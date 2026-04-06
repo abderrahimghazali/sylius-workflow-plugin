@@ -13,6 +13,8 @@ final class SendWebhookAction implements ActionInterface
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly LoggerInterface $logger,
+        private readonly int $timeout = 10,
+        private readonly bool $allowHttp = false,
     ) {
     }
 
@@ -39,7 +41,7 @@ final class SendWebhookAction implements ActionInterface
         try {
             $response = $this->httpClient->request('POST', $url, [
                 'json' => $payload,
-                'timeout' => 10,
+                'timeout' => $this->timeout,
             ]);
 
             $statusCode = $response->getStatusCode();
@@ -63,23 +65,34 @@ final class SendWebhookAction implements ActionInterface
             return false;
         }
 
-        if (!\in_array($parsed['scheme'], ['https', 'http'], true)) {
+        $allowedSchemes = $this->allowHttp ? ['https', 'http'] : ['https'];
+        if (!\in_array($parsed['scheme'], $allowedSchemes, true)) {
             return false;
         }
 
         $host = $parsed['host'];
 
-        if (\in_array($host, ['localhost', '127.0.0.1', '0.0.0.0', '[::1]', '169.254.169.254'], true)) {
+        // Block well-known private/loopback hostnames
+        $blockedHosts = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]', '169.254.169.254'];
+        if (\in_array($host, $blockedHosts, true)) {
             return false;
         }
 
-        $ip = gethostbyname($host);
-        if ($ip === $host) {
+        // Resolve all IPs for the hostname and validate each one
+        $records = dns_get_record($host, DNS_A | DNS_AAAA);
+        if ($records === false || $records === []) {
             return false;
         }
 
-        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-            return false;
+        foreach ($records as $record) {
+            $ip = $record['ip'] ?? $record['ipv6'] ?? null;
+            if ($ip === null) {
+                continue;
+            }
+
+            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return false;
+            }
         }
 
         return true;

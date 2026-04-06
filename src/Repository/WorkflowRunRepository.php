@@ -47,23 +47,7 @@ class WorkflowRunRepository extends EntityRepository
             ->getQuery()
             ->getResult();
 
-        $emailsSent = 0;
-        $couponsGenerated = 0;
-
-        foreach ($runs as $run) {
-            foreach ($run['executionLog'] ?? [] as $entry) {
-                if (($entry['status'] ?? '') !== 'completed') {
-                    continue;
-                }
-                $message = $entry['message'] ?? '';
-                if (str_contains($message, 'Email sent')) {
-                    $emailsSent++;
-                }
-                if (str_contains($message, 'Coupon')) {
-                    $couponsGenerated++;
-                }
-            }
-        }
+        [$emailsSent, $couponsGenerated] = $this->countActionTypes($runs);
 
         return [
             'totalRuns' => $totalRuns,
@@ -81,9 +65,17 @@ class WorkflowRunRepository extends EntityRepository
         $metadata = $this->getEntityManager()->getClassMetadata($this->getClassName());
         $tableName = $metadata->getTableName();
         $conn = $this->getEntityManager()->getConnection();
+        $platform = $conn->getDatabasePlatform();
+
+        // Use CAST for PostgreSQL compatibility (DATE works on MySQL/MariaDB, CAST works on both)
+        $dateExpr = match (true) {
+            str_contains($platform::class, 'PostgreSQL') => 'CAST(started_at AS DATE)',
+            default => 'DATE(started_at)',
+        };
 
         $sql = sprintf(
-            'SELECT DATE(started_at) AS run_date, COUNT(*) AS run_count FROM %s WHERE started_at >= :since GROUP BY run_date ORDER BY run_date ASC',
+            'SELECT %s AS run_date, COUNT(*) AS run_count FROM %s WHERE started_at >= :since GROUP BY run_date ORDER BY run_date ASC',
+            $dateExpr,
             $tableName,
         );
 
@@ -95,7 +87,12 @@ class WorkflowRunRepository extends EntityRepository
         $today = new \DateTimeImmutable('today');
         $countsByDate = [];
         foreach ($rows as $row) {
-            $countsByDate[$row['run_date']] = (int) $row['run_count'];
+            $date = $row['run_date'];
+            // PostgreSQL CAST returns a Date object, normalize to string
+            if ($date instanceof \DateTimeInterface) {
+                $date = $date->format('Y-m-d');
+            }
+            $countsByDate[$date] = (int) $row['run_count'];
         }
 
         while ($current <= $today) {
@@ -140,18 +137,9 @@ class WorkflowRunRepository extends EntityRepository
         $couponsByCampaign = [];
         foreach ($runsByCampaign as $run) {
             $cId = $run['campaignId'];
-            foreach ($run['executionLog'] ?? [] as $entry) {
-                if (($entry['status'] ?? '') !== 'completed') {
-                    continue;
-                }
-                $message = $entry['message'] ?? '';
-                if (str_contains($message, 'Email sent')) {
-                    $emailsByCampaign[$cId] = ($emailsByCampaign[$cId] ?? 0) + 1;
-                }
-                if (str_contains($message, 'Coupon')) {
-                    $couponsByCampaign[$cId] = ($couponsByCampaign[$cId] ?? 0) + 1;
-                }
-            }
+            [$emails, $coupons] = $this->countActionTypes([$run]);
+            $emailsByCampaign[$cId] = ($emailsByCampaign[$cId] ?? 0) + $emails;
+            $couponsByCampaign[$cId] = ($couponsByCampaign[$cId] ?? 0) + $coupons;
         }
 
         $result = [];
@@ -171,5 +159,47 @@ class WorkflowRunRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * Count email and coupon actions from execution log entries.
+     * Uses structured actionType field with fallback to message string matching for backward compatibility.
+     *
+     * @return array{0: int, 1: int} [emailsSent, couponsGenerated]
+     */
+    private function countActionTypes(array $runs): array
+    {
+        $emailsSent = 0;
+        $couponsGenerated = 0;
+
+        foreach ($runs as $run) {
+            foreach ($run['executionLog'] ?? [] as $entry) {
+                if (($entry['status'] ?? '') !== 'completed') {
+                    continue;
+                }
+
+                $actionType = $entry['actionType'] ?? null;
+                if ($actionType !== null) {
+                    if ($actionType === 'send_email') {
+                        $emailsSent++;
+                    }
+                    if ($actionType === 'generate_coupon') {
+                        $couponsGenerated++;
+                    }
+                    continue;
+                }
+
+                // Fallback for logs created before actionType was added
+                $message = $entry['message'] ?? '';
+                if (str_contains($message, 'Email sent')) {
+                    $emailsSent++;
+                }
+                if (str_contains($message, 'Coupon')) {
+                    $couponsGenerated++;
+                }
+            }
+        }
+
+        return [$emailsSent, $couponsGenerated];
     }
 }

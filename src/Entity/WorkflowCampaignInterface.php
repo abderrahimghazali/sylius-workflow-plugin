@@ -31,6 +31,10 @@ interface WorkflowCampaignInterface extends ResourceInterface, TimestampableInte
 
     public function setGraph(array $graph): void;
 
+    public function getTriggerEvent(): ?string;
+
+    public function setTriggerEvent(?string $triggerEvent): void;
+
     public function getRunCount(): int;
 
     public function incrementRunCount(): void;
@@ -41,6 +45,9 @@ interface WorkflowCampaignInterface extends ResourceInterface, TimestampableInte
 
     /** @return Collection<int, WorkflowRunInterface> */
     public function getRuns(): Collection;
+
+    /** @return Collection<int, WorkflowTriggerLogInterface> */
+    public function getTriggerLogs(): Collection;
 
     public function getNodes(): array;
 

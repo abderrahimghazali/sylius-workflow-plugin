@@ -18,7 +18,7 @@
 
         <field name="subjectType" type="string" length="50" column="subject_type"/>
         <field name="subjectId" type="integer" column="subject_id"/>
-        <field name="status" type="string" length="20"/>
+        <field name="status" type="string" length="20" enum-type="Abderrahim\SyliusWorkflowPlugin\Enum\RunStatus"/>
         <field name="currentNodeId" type="string" length="255" column="current_node_id"/>
         <field name="executionLog" type="json" column="execution_log"/>
         <field name="startedAt" type="datetime_immutable" column="started_at"/>

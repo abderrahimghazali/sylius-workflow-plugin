@@ -14,6 +14,14 @@ final class WorkflowGraphValidator
     public function validate(array $graph): array
     {
         $errors = [];
+
+        // Limit total graph payload size to prevent excessive storage
+        $graphSize = \strlen(json_encode($graph, JSON_THROW_ON_ERROR));
+        if ($graphSize > 512_000) {
+            $errors[] = sprintf('Graph payload exceeds maximum size (500KB). Size: %dKB.', (int) ($graphSize / 1024));
+            return $errors;
+        }
+
         $nodes = $graph['nodes'] ?? [];
         $edges = $graph['edges'] ?? [];
 

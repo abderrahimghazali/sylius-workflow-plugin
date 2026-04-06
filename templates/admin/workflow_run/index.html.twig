@@ -60,8 +60,8 @@
                                             <td>#{{ run.id }}</td>
                                             <td>{{ run.subjectType|capitalize }} #{{ run.subjectId }}</td>
                                             <td>
-                                                <span class="badge text-white bg-{{ status_colors[run.status] ?? 'secondary' }}">
-                                                    {{ run.status }}
+                                                <span class="badge text-white bg-{{ status_colors[run.status.value] ?? 'secondary' }}">
+                                                    {{ run.status.value }}
                                                 </span>
                                             </td>
                                             <td>{{ run.startedAt|date('Y-m-d H:i:s') }}</td>

@@ -15,21 +15,14 @@ class WorkflowCampaignRepository extends EntityRepository
      */
     public function findActiveByTriggerEvent(string $eventName): array
     {
-        $qb = $this->createQueryBuilder('c')
+        return $this->createQueryBuilder('c')
             ->where('c.enabled = :enabled')
             ->andWhere('c.status = :status')
+            ->andWhere('c.triggerEvent = :event')
             ->setParameter('enabled', true)
-            ->setParameter('status', WorkflowStatus::Active->value);
-
-        $campaigns = $qb->getQuery()->getResult();
-
-        return array_filter($campaigns, function (WorkflowCampaign $campaign) use ($eventName): bool {
-            foreach ($campaign->getNodes() as $node) {
-                if (($node['type'] ?? '') === 'trigger' && ($node['config']['event'] ?? '') === $eventName) {
-                    return true;
-                }
-            }
-            return false;
-        });
+            ->setParameter('status', WorkflowStatus::Active->value)
+            ->setParameter('event', $eventName)
+            ->getQuery()
+            ->getResult();
     }
 }

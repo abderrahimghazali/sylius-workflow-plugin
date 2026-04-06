@@ -6,6 +6,7 @@ namespace Tests\Abderrahim\SyliusWorkflowPlugin\Graph;
 
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowCampaign;
 use Abderrahim\SyliusWorkflowPlugin\Entity\WorkflowRun;
+use Abderrahim\SyliusWorkflowPlugin\Enum\RunStatus;
 use Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus;
 use Abderrahim\SyliusWorkflowPlugin\Graph\Action\ActionInterface;
 use Abderrahim\SyliusWorkflowPlugin\Graph\Rule\RuleInterface;
@@ -80,7 +81,7 @@ final class WorkflowExecutorTest extends TestCase
 
         $run = $this->executor->execute($campaign, $context);
 
-        self::assertSame(WorkflowRun::STATUS_COMPLETED, $run->getStatus());
+        self::assertSame(RunStatus::Completed, $run->getStatus());
         self::assertNotEmpty($run->getExecutionLog());
     }
 
@@ -112,7 +113,7 @@ final class WorkflowExecutorTest extends TestCase
 
         $run = $this->executor->execute($campaign, $context);
 
-        self::assertSame(WorkflowRun::STATUS_COMPLETED, $run->getStatus());
+        self::assertSame(RunStatus::Completed, $run->getStatus());
     }
 
     public function testConditionFailsStopsExecution(): void
@@ -141,7 +142,7 @@ final class WorkflowExecutorTest extends TestCase
 
         $run = $this->executor->execute($campaign, $context);
 
-        self::assertSame(WorkflowRun::STATUS_COMPLETED, $run->getStatus());
+        self::assertSame(RunStatus::Completed, $run->getStatus());
     }
 
     public function testTriggerEventMismatchSkips(): void
@@ -164,7 +165,7 @@ final class WorkflowExecutorTest extends TestCase
 
         $run = $this->executor->execute($campaign, $context);
 
-        self::assertSame(WorkflowRun::STATUS_COMPLETED, $run->getStatus());
+        self::assertSame(RunStatus::Completed, $run->getStatus());
     }
 
     public function testDelayNodeDispatchesMessageAndStops(): void
@@ -194,7 +195,7 @@ final class WorkflowExecutorTest extends TestCase
         $run = $this->executor->execute($campaign, $context);
 
         // Run should still be running (waiting for delay)
-        self::assertSame(WorkflowRun::STATUS_RUNNING, $run->getStatus());
+        self::assertSame(RunStatus::Running, $run->getStatus());
     }
 
     public function testNoTriggerNodeFailsRun(): void
@@ -211,7 +212,7 @@ final class WorkflowExecutorTest extends TestCase
 
         $run = $this->executor->execute($campaign, $context);
 
-        self::assertSame(WorkflowRun::STATUS_FAILED, $run->getStatus());
+        self::assertSame(RunStatus::Failed, $run->getStatus());
         self::assertStringContainsString('No trigger node', $run->getErrorMessage());
     }
 
@@ -237,7 +238,7 @@ final class WorkflowExecutorTest extends TestCase
         $run = $this->executor->execute($campaign, $context);
 
         // Workflow completes even when action fails (graceful degradation)
-        self::assertSame(WorkflowRun::STATUS_COMPLETED, $run->getStatus());
+        self::assertSame(RunStatus::Completed, $run->getStatus());
 
         $log = $run->getExecutionLog();
         $actionLog = array_filter($log, fn (array $entry) => $entry['nodeId'] === 'action-1');

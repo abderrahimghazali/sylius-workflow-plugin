@@ -17,6 +17,7 @@
         <field name="enabled" type="boolean"/>
         <field name="status" type="string" length="20" enum-type="Abderrahim\SyliusWorkflowPlugin\Enum\WorkflowStatus"/>
         <field name="graph" type="json"/>
+        <field name="triggerEvent" type="string" length="255" column="trigger_event" nullable="true"/>
         <field name="runCount" type="integer" column="run_count"/>
         <field name="lastRunAt" type="datetime_immutable" column="last_run_at" nullable="true"/>
         <field name="createdAt" type="datetime_immutable" column="created_at"/>

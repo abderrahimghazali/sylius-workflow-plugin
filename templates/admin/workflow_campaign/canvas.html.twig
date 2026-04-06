@@ -18,6 +18,8 @@
             data-runs-url="{{ path('workflow_admin_run_index', {id: campaign.id}) }}"
             data-back-url="{{ path('workflow_admin_campaign_edit', {id: campaign.id}) }}"
             data-product-search-url="{{ path('sylius_workflow_api_product_search') }}"
+            data-toggle-url="{{ path('workflow_admin_campaign_toggle', {id: campaign.id}) }}"
+            data-csrf-toggle="{{ csrf_token('workflow_toggle') }}"
             style="height: calc(100vh - 80px); position: relative; overflow: hidden;"
         ></div>
     </div>

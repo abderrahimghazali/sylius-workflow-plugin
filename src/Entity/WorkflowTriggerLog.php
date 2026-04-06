@@ -8,7 +8,7 @@ class WorkflowTriggerLog implements WorkflowTriggerLogInterface
 {
     protected ?int $id = null;
 
-    protected WorkflowCampaignInterface $campaign;
+    protected ?WorkflowCampaignInterface $campaign = null;
 
     protected string $eventName = '';
 
@@ -75,6 +75,8 @@ class WorkflowTriggerLog implements WorkflowTriggerLogInterface
 
     public static function generateDedupKey(int $campaignId, string $eventName, int $subjectId): string
     {
-        return hash('sha256', sprintf('%d:%s:%d:%s', $campaignId, $eventName, $subjectId, date('Y-m-d')));
+        $date = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d');
+
+        return hash('sha256', sprintf('%d:%s:%d:%s', $campaignId, $eventName, $subjectId, $date));
     }
 }

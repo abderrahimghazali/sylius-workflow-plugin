@@ -34,6 +34,7 @@ final class WorkflowExecutor
         private readonly MessageBusInterface $messageBus,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
+        private readonly int $maxSteps = 200,
     ) {
         $this->rules = $rules;
         $this->actions = $actions;
@@ -77,7 +78,7 @@ final class WorkflowExecutor
         $queue = [$startNodeId];
         $visited = [];
         $stepCount = 0;
-        $maxSteps = 200;
+        $maxSteps = $this->maxSteps;
         $hasDelay = false;
 
         while (!empty($queue)) {
@@ -220,14 +221,14 @@ final class WorkflowExecutor
                 $result = $action->execute($actionNode->getConfig(), $context);
 
                 $status = $result['success'] ? 'completed' : 'failed';
-                $run->addLogEntry($actionNode->getId(), $status, $result['message']);
+                $run->addLogEntry($actionNode->getId(), $status, $result['message'], $actionNode->getActionType());
 
                 // Continue workflow even if action fails (graceful degradation)
                 return true;
             }
         }
 
-        $run->addLogEntry($actionNode->getId(), 'failed', sprintf('No action executor found for "%s".', $actionNode->getActionType()));
+        $run->addLogEntry($actionNode->getId(), 'failed', sprintf('No action executor found for "%s".', $actionNode->getActionType()), $actionNode->getActionType());
         $this->logger->warning('No action executor found for type: ' . $actionNode->getActionType());
 
         return true;

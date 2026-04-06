@@ -25,6 +25,8 @@ class WorkflowCampaign implements WorkflowCampaignInterface
 
     protected array $graph = ['nodes' => [], 'edges' => []];
 
+    protected ?string $triggerEvent = null;
+
     protected int $runCount = 0;
 
     protected ?\DateTimeImmutable $lastRunAt = null;
@@ -96,6 +98,28 @@ class WorkflowCampaign implements WorkflowCampaignInterface
     public function setGraph(array $graph): void
     {
         $this->graph = $graph;
+        $this->triggerEvent = $this->extractTriggerEvent($graph);
+    }
+
+    public function getTriggerEvent(): ?string
+    {
+        return $this->triggerEvent;
+    }
+
+    public function setTriggerEvent(?string $triggerEvent): void
+    {
+        $this->triggerEvent = $triggerEvent;
+    }
+
+    private function extractTriggerEvent(array $graph): ?string
+    {
+        foreach ($graph['nodes'] ?? [] as $node) {
+            if (($node['type'] ?? '') === 'trigger') {
+                return $node['config']['event'] ?? null;
+            }
+        }
+
+        return null;
     }
 
     public function getRunCount(): int

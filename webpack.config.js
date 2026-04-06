@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
     entry: {
         'workflow-editor': './assets/workflow-editor/index.js',
+        'workflow-analytics': './assets/analytics/index.js',
     },
     output: {
         path: path.resolve(__dirname, 'public'),
