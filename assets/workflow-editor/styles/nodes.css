@@ -109,19 +109,18 @@
     -webkit-box-orient: vertical;
 }
 
-/* ── Condition Branch Handles (Shopify Flow style) ──────── */
+/* ── Condition Branch Handles ────────────────────────────── */
 
 .swp-node__branches {
     display: flex;
     flex-direction: column;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
 }
 
 .swp-node__branch {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
+    text-align: center;
+    padding: 6px 0;
     position: relative;
 }
 
@@ -129,15 +128,8 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.swp-node__branch .react-flow__handle {
-    position: absolute;
-    right: -4px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
 .swp-node__branch-label {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;

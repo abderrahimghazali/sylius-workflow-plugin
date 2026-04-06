@@ -68,11 +68,11 @@ export default function BaseNode({ data, selected }) {
                 <div className="swp-node__branches">
                     <div className="swp-node__branch swp-node__branch--true">
                         <span className="swp-node__branch-label">Then</span>
-                        <Handle type="source" position={Position.Right} id="exit-true" />
+                        <Handle type="source" position={Position.Right} id="exit-true" style={{ top: '35%' }} />
                     </div>
                     <div className="swp-node__branch swp-node__branch--false">
                         <span className="swp-node__branch-label">Otherwise</span>
-                        <Handle type="source" position={Position.Right} id="exit-false" />
+                        <Handle type="source" position={Position.Right} id="exit-false" style={{ top: '65%' }} />
                     </div>
                 </div>
             ) : (
